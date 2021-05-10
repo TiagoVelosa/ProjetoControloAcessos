@@ -1,0 +1,9 @@
+{% if request.user.is_authenticated %}
+    <p>Hello , {{request.user.username}} | <a href= "{% url 'logout' %}">LogOut </a></p> 
+{% else %}
+    <p> 
+        <a href = "{% url 'registo' %}">Registo</a>
+        <a href = "{% url 'login' %}">LogIn</a>
+    </p>
+{% endif %}
+Home screen
