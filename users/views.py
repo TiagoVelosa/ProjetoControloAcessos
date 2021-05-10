@@ -7,9 +7,7 @@ def home_view(request):
     return render(request,'home.html')
 
 def register_view(request):
-    context = {
-
-    }
+    context = {}
     if request.POST:
         form = FormRegisto(request.POST)
         if form.is_valid():
@@ -20,7 +18,6 @@ def register_view(request):
             login(request,user)
             return redirect('home')
         else:
-            print(form.errors)
             context['form_registo']  = form
     else:
         form = FormRegisto()

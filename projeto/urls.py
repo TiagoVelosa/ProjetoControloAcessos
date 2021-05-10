@@ -20,7 +20,7 @@ from users.views import home_view, register_view, logout_view,login_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', home_view, name = "home"),
+    path('', home_view, name = "home"),
     path('registo/', register_view, name ="registo"),
     path('logout/', logout_view, name ="logout"),
     path('login/', login_view, name ="login"),
