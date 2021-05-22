@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+TESTE_Inputs
+{% endblock %}
+
+
+
+{% block content %}
+<h1 class = "mt-4">Testes Inputs </h1>
+
+    <div class = "card mb-4">     
+    </div>
+
+    <h2 class = "mt-4">Adicionar Edifício </h1>
+        
+    <div class = "card mb-4">     
+    </div>
+    
+    <form method="POST" action=".">
+        
+        {% csrf_token %}
+        
+        <input type = "text" name ="nome_edificio" placeholder="Nome do Edifício!">
+        
+
+        <input type="submit" value="Save">
+    </form>
+
+    <h2 class = "mt-4">Adicionar Local </h1>
+        
+        <div class = "card mb-4">     
+        </div>
+        
+        <form method="POST" action=".">
+            
+            {% csrf_token %}
+            
+            <input type = "text" name ="descricao_local" placeholder="Descrição do local">
+            <select name = "edificio_id">
+                <option selected>Selecione o Edificio</option>
+                {% for Edifício in todos_edificios %}
+                <option value = "{{Edifício.id}}"> {{Edifício.nome}}</option>
+                {% endfor %}
+            </select>
+            
+    
+            <input type="submit" value="Save">
+        </form>
+        <h2 class = "mt-4">Edifícios </h1>
+        
+            <div class = "card mb-4">     
+            </div>
+        {% if todos_edificios %}
+        <ul>
+            {% for Edifício in todos_edificios %}
+            <li>
+                {{Edifício.nome}}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Não há edifícios.</p>
+        {% endif %} 
+        <h2 class = "mt-4">Locais </h1>
+        
+            <div class = "card mb-4">     
+            </div>
+        {% if todos_locais %}
+        <ul>
+            {% for Local in todos_locais %}
+            <li>
+                {{Local.descricao}}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Não há locais.</p>
+        {% endif %} 
+
+        
+
+{% endblock %}

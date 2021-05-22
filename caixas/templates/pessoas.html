@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+Pessoas
+{% endblock %}
+
+{% block content %}
+<h2>Adicionar Pessoas</h2>
+<form method ="post">
+    {% csrf_token %}
+    {% if dados_invalidos %}
+        <div style = "color: red;">
+            <p>{{dados_invalidos}}</p>
+        </div>
+    {% endif %}
+    {% for field in pessoa_form %}
+        <p>
+            {{field.label_tag}}
+            {{field}}
+
+            {% if field.help_text %}
+                <small style= "color: grey;">{{field.help_text}}</small>
+            {% endif %}
+            {% for error in field.erros %}
+                <p style="color: red;">{{field.help_text}}</p>
+            {% endfor %}                        
+        </p>
+    {% endfor %}
+
+    {% if pessoa_form.non_field_errors %}
+                <div style = "color: red;">
+                    <p>{{pessoa_form.non_field_errors}}</p>
+                </div>
+            {% endif %}
+    
+    <button type = "submit">Sumbmit</button>
+
+</form>
+{% endblock %}

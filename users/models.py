@@ -2,14 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class Gestores(BaseUserManager):
-    def create_user(self, email,username,first_name,last_name, password = None):
+    def create_user(self, email,first_name,last_name, password = None):
         if not email:
             raise ValueError("O gestor precisa ter um email!")
-        if not username:
-            raise ValueError("O gestor precisa ter um username!")
+        
         user = self.model(
             email = self.normalize_email(email),
-            username = username,
+            
             first_name = first_name,
             last_name = last_name,
         )
@@ -18,11 +17,10 @@ class Gestores(BaseUserManager):
         return user
 
 
-    def create_superuser(self,email,username,password,first_name,last_name):
+    def create_superuser(self,email,password,first_name,last_name):
         user = self.create_user(
             email = self.normalize_email(email),
-            password=password,
-            username = username,
+            password=password,            
             first_name = first_name,
             last_name = last_name,
         )
@@ -32,10 +30,9 @@ class Gestores(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_supergestor(self,email,first_name,last_name,username,password=None):
+    def create_supergestor(self,email,first_name,last_name,password=None):
         user = self.create_user(
-            email = self.normalize_email(email),
-            username = username,
+            email = self.normalize_email(email),            
             first_name = first_name,
             last_name = last_name,
         )
@@ -46,7 +43,6 @@ class Gestores(BaseUserManager):
 
 class Gestor(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60,unique= True, error_messages={'unique': "Já existe um gestor registado com este email!"})
-    username = models.CharField(max_length=30,unique=True, error_messages={'unique': "Já existe um gestor registado com este username!"})
     date_joined = models.DateField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateField(verbose_name="last login", auto_now = True)
     is_supergestor = models.BooleanField(default=False)
@@ -59,7 +55,7 @@ class Gestor(AbstractBaseUser):
     objects = Gestores()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username","first_name","last_name"]
+    REQUIRED_FIELDS = ["first_name","last_name"]
 
     def __str__(self):
         return self.email

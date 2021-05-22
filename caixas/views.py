@@ -1,3 +1,103 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from caixas.forms import EdificioForm,LocalForm,PessoaForm, FormAdicionarGestor
+from caixas.models import Edificio, Local, Pessoa, Rel_Gestor_Edificio
+from users.models import Gestor
 
 # Create your views here.
+
+def teste_view(request):
+    return render(request,'base.html')
+
+def edificio_view(request):
+    context = {}
+    current_user = request.user
+    tem_edificio = Rel_Gestor_Edificio.objects.filter(gestor_id=current_user.id)
+    context["edificios"] = tem_edificio
+    return render(request,'edificios.html',context)
+
+def input_view(request):
+    return render(request, 'inputs.html')
+
+def caixas_view(request):
+    return render(request,'caixas.html')
+
+
+def gestores_view(request):    
+    context = {}
+    todos_edificios = Edificio.objects.all()
+    todos_gestores = Gestor.objects.all()
+    context = {
+        'todos_edificios': todos_edificios,
+        'todos_gestores': todos_gestores
+    }
+    if request.POST:       
+        form_gestor = FormAdicionarGestor(request.POST) 
+        form_edificio = EdificioForm(request.POST)
+        context['edificio_form'] = form_edificio
+        context['form_gestor'] = form_gestor
+        if form_edificio.is_valid():
+            edf = Edificio()            
+            edf.nome = request.POST['nome']
+            edf.descricao = request.POST['descricao']
+            edf.save()
+            return redirect('gestores')           
+        
+    else:        
+        form_edificio = EdificioForm()
+        form_gestor = FormAdicionarGestor()
+        
+    context['edificio_form'] = form_edificio
+    context['form_gestor'] = form_gestor
+    return render(request, "gestores.html",context)
+
+
+def locais_view(request):    
+    context = {}
+    if request.POST:        
+        form = LocalForm(request.POST)
+        context['locais_form'] = form
+        if form.is_valid():
+            print(request.POST)
+            local = Local()            
+            local.nome = request.POST['nome']
+            local.descricao = request.POST['descricao']
+            local.data_fim = request.POST['data_fim']
+            local.data_inicio = request.POST['data_inicio']
+            local.edificio = Edificio.objects.get(pk=request.POST['edificio'])
+            if (request.POST['ativo'] =="on"):
+                local.ativo = True
+            else:
+                local.ativo = False
+
+            local.save()
+            return redirect('locais')            
+        
+    else:        
+        form = LocalForm()
+        
+    context['locais_form'] = form
+    return render(request, "locais.html",context)
+
+
+def pessoas_view(request):    
+    context = {}
+    if request.POST:        
+        form = PessoaForm(request.POST)
+        context['pessoa_form'] = form
+        if form.is_valid():
+            print(request.POST)
+            pessoa = Pessoa()            
+            pessoa.first_name = request.POST['first_name']
+            pessoa.descricao = request.POST['descricao']
+            pessoa.email = request.POST['email']
+            pessoa.last_name = request.POST['last_name']
+            pessoa.phone_number = request.POST['phone_number']
+
+            pessoa.save()
+            return redirect('pessoas')            
+        
+    else:        
+        form = PessoaForm()
+        
+    context['pessoa_form'] = form
+    return render(request, "pessoas.html",context)

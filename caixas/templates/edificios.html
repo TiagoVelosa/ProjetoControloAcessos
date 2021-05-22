@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edificios
+{% endblock %}
+
+{% block content %}
+
+
+{% if True %}
+<h1 class = "mt-4">Edifícios </h1>
+<div class = "card mb-4"></div>
+<h3 class = "mt-4">Selecione o edifício: </h3>
+<form method="POST" action=".">        
+    {% csrf_token %}    
+    <select name = "edificio_id">
+        <option selected>Selecione o Edificio</option>
+        {% for Edifício in edificios %}
+        <option value = "{{Edifício.id}}"> {{Edifício.nome}}</option>
+        {% endfor %}
+    </select>
+    
+    <input type="submit" value="Save">
+</form>
+
+
+
+
+
+{% else %}
+
+
+<h1 class = "mt-4">Edifícios </h1>
+
+    <div class = "card mb-4">     
+    </div>
+<h2 class = "mt-4">Não tem edifícios associados!</h2>
+
+{% endif %}
+{% endblock %}

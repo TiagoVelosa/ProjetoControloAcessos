@@ -4,12 +4,14 @@ from django.contrib.auth import authenticate
 
 from users.models import Gestor
 
+
+
 class FormRegisto(UserCreationForm):
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
 
     class Meta:
         model = Gestor
-        fields = ("email","username","first_name","last_name", "password1", "password2")
+        fields = ("email","first_name","last_name", "password1", "password2")
 
 class GestorAuthenticationForm(forms.ModelForm):
     password = forms.CharField(label="Password", widget=forms.PasswordInput)

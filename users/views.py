@@ -7,7 +7,7 @@ def home_view(request):
     return render(request,'home.html')
 
 def teste_view(request):
-    return render(request,'teste.html')
+    return render(request,'base.html')
 
 def register_view(request):
     context = {}
