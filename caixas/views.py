@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from caixas.forms import EdificioForm,LocalForm,PessoaForm, FormAdicionarGestor
+from caixas.forms import EdificioForm,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor
 from caixas.models import Edificio, Local, Pessoa, Rel_Gestor_Edificio
 from users.models import Gestor
 
@@ -22,7 +22,8 @@ def caixas_view(request):
     return render(request,'caixas.html')
 
 
-def gestores_view(request):    
+def gestores_view(request): 
+    print(request.POST)   
     context = {}
     todos_edificios = Edificio.objects.all()
     todos_gestores = Gestor.objects.all()
@@ -33,20 +34,49 @@ def gestores_view(request):
     if request.POST:       
         form_gestor = FormAdicionarGestor(request.POST) 
         form_edificio = EdificioForm(request.POST)
+        form_edf_gestor= Form_Edf_Gestor(request.POST)
         context['edificio_form'] = form_edificio
         context['form_gestor'] = form_gestor
+        context['form_rel'] = form_edf_gestor
         if form_edificio.is_valid():
             edf = Edificio()            
             edf.nome = request.POST['nome']
             edf.descricao = request.POST['descricao']
             edf.save()
-            return redirect('gestores')           
+            return redirect('gestores')    
+        if form_gestor.is_valid():
+            
+            gestor = Gestor()
+            gestor.first_name = request.POST['first_name']
+            gestor.last_name = request.POST['last_name']
+            gestor.set_password(request.POST['password'])
+            gestor.email = request.POST['email']
+            if('is_supergestor' in request.POST):
+                gestor.is_supergestor = True
+            else:
+                gestor.is_supergestor = False
+            gestor.save()
+            return redirect('gestores')
+        if form_edf_gestor.is_valid():
+            
+            relacao = Rel_Gestor_Edificio()
+            relacao.edificio = Edificio.objects.get(pk = request.POST.get('edificio')) 
+            relacao.gestor = Gestor.objects.get(pk = request.POST.get('gestor'))
+            if('data_fim' != ""):
+                relacao.data_fim= request.POST['data_fim']                      
+            relacao.data_inicio = request.POST['data_inicio']
+            relacao.save()
+            return redirect('gestores')
+
+        
         
     else:        
         form_edificio = EdificioForm()
         form_gestor = FormAdicionarGestor()
+        form_edf_gestor = Form_Edf_Gestor()
         
     context['edificio_form'] = form_edificio
+    context['form_rel'] = form_edf_gestor
     context['form_gestor'] = form_gestor
     return render(request, "gestores.html",context)
 

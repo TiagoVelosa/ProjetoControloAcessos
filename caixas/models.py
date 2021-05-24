@@ -58,8 +58,8 @@ class Caixa_Local(models.Model):
 class Rel_Gestor_Edificio(models.Model):
     gestor = models.ForeignKey(Gestor,on_delete=models.SET_NULL,null=True)
     edificio = models.ForeignKey(Edificio,on_delete=models.SET_NULL,null=True)
-    data_inicio = models.DateField()
-    data_fim = models.DateField(blank=True, null=True)
+    data_inicio = models.DateField(help_text = "Formato: YYYY-MM-DD Exemplo: 2021-12-31")
+    data_fim = models.DateField(blank=True, null=True,help_text = "Formato: YYYY-MM-DD Exemplo: 2021-12-31")
 
 class Pessoa_Cartao(models.Model):
     pessoa = models.ForeignKey(Pessoa,on_delete=models.SET_NULL,null=True)

@@ -1,6 +1,9 @@
 
 from django import forms
-from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local
+from django.core.exceptions import ValidationError
+from django.forms import fields
+from django.shortcuts import redirect
+from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
 
 
@@ -24,6 +27,8 @@ class EdificioForm(forms.ModelForm):
     class Meta:
         model = Edificio
         fields=("nome","descricao")
+    
+
 
 class LocalForm(forms.ModelForm):
     nome = forms.CharField(max_length=20, label = "Nome")
@@ -99,3 +104,7 @@ class Form_Edf_Gestor(forms.ModelForm):
     data_fim = forms.DateInput()
     gestor = forms.ModelChoiceField(queryset=Gestor.objects.all(),empty_label="Selecione o Gestor",initial=0)
     edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",initial=0)
+
+    class Meta:
+        model = Rel_Gestor_Edificio
+        fields = ('data_inicio',"data_fim","gestor","edificio")
