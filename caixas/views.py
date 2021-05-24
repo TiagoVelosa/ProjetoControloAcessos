@@ -57,15 +57,19 @@ def gestores_view(request):
                 gestor.is_supergestor = False
             gestor.save()
             return redirect('gestores')
+       # if ('data_inicio' in request.POST and 'Gestor_ID' in request.POST and 'Edificio_Id' in request.POST):            
+        #    relacao = Rel_Gestor_Edificio()
+         #   relacao.edificio = Edificio.objects.get(pk = request.POST.get('Edificio_Id')) 
+          #  relacao.gestor = Gestor.objects.get(pk = request.POST.get('Gestor_ID'))
+           # relacao.data_inicio = request.POST['data_inicio']
+            #if('data_fim' != ""):
+             #   relacao.data_fim= request.POST['data_fim']                     
+            
+            #relacao.save()
+            #return redirect('gestores')
         if form_edf_gestor.is_valid():
             
-            relacao = Rel_Gestor_Edificio()
-            relacao.edificio = Edificio.objects.get(pk = request.POST.get('edificio')) 
-            relacao.gestor = Gestor.objects.get(pk = request.POST.get('gestor'))
-            if('data_fim' != ""):
-                relacao.data_fim= request.POST['data_fim']                      
-            relacao.data_inicio = request.POST['data_inicio']
-            relacao.save()
+            form_edf_gestor.save()
             return redirect('gestores')
 
         

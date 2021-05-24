@@ -108,3 +108,23 @@ class Form_Edf_Gestor(forms.ModelForm):
     class Meta:
         model = Rel_Gestor_Edificio
         fields = ('data_inicio',"data_fim","gestor","edificio")
+
+    def clean(self):
+        cleaned_data = super(Form_Edf_Gestor, self).clean()
+        if not cleaned_data['data_fim']:
+            cleaned_data['data_fim'] = None
+
+        gestor = cleaned_data['gestor']
+        edificio = cleaned_data['edificio']
+        data_inicio = cleaned_data['data_inicio']
+        data_fim = cleaned_data['data_fim']
+        if(Rel_Gestor_Edificio.objects.filter(data_inicio=data_inicio, gestor=gestor, edificio = edificio, data_fim=data_fim)):
+             
+            raise forms.ValidationError("Já existe uma relação com esses dados")
+
+        
+
+        if(data_fim != None):
+            if(data_inicio>data_fim):
+                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
+        return cleaned_data

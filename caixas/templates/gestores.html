@@ -78,8 +78,43 @@ Gestores
 </div>
 <div class = "card mb-4"></div>
 <div id = "Associar_Gestor_Edificio">    
+    <!--<form method ="post"> 
+        {% csrf_token %}
+        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="margin-bottom: 1%;">
+                <label for="data_fim">Data Inicio</label>        
+                <input name="data_inicio" type="date">
+            </div>
+            <div style="margin-bottom: 1%;">
+                <label for="data_fim">Data Fim</label>
+                <input name="data_fim" type="date">
+            </div>
+            <div style="margin-bottom: 1%;">
+                <label for ="Gestor_ID">Gestor: </label>
+                <select name = "Gestor_ID">
+                    <option selected>Selecione o Gestor</option>
+                    {% for Gestor in todos_gestores %}
+                    <option value = "{{Gestor.id}}"> {{Gestor.first_name}} {{Gestor.last_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="margin-bottom: 1%;">
+                <label for="Edificio_ID">Edificio</label>
+                <select name = "Edificio_Id">
+                    <option selected>Selecione o Edificio</option>
+                    {% for Edifício in todos_edificios %}
+                    <option value = "{{Edifício.id}}"> {{Edifício.nome}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <button type = "submit" style="margin-bottom: 2%;">Adicionar Gestor</button>
+    </form>-->
     <form method ="post"> 
         {% csrf_token %}
+        {% for error in form_rel.non_field_errors %}
+            <p style="color: red;"> {{error}} </p>
+        {% endfor %}
         {% for field in form_rel %}
             <p>
                 {{field.label_tag}}
@@ -89,7 +124,7 @@ Gestores
                     <small style= "color: grey;">{{field.help_text}}</small>
                 {% endif %}
                 {% for error in field.erros %}
-                    <p style="color: red;">{{field.help_text}}</p>
+                    <p style="color: red;">{{error}}</p>
                 {% endfor %}                        
             </p>
         {% endfor %}
