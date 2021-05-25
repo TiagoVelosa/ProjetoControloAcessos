@@ -8,25 +8,69 @@ Edificios
 
 
 {% if True %}
-<h1 class = "mt-4">Edifícios </h1>
-<div class = "card mb-4"></div>
-<h3 class = "mt-4">Selecione o edifício: </h3>
-<form method="POST" action=".">        
-    {% csrf_token %}    
-    <select name = "edificio_id">
-        <option selected>Selecione o Edificio</option>
-        {% for Edifício in edificios %}
-        <option value = "{{Edifício.id}}"> {{Edifício.nome}}</option>
-        {% endfor %}
-    </select>
+    <div style="display: flex; flex-direction: row; align-items: baseline ;">
+        <h3 class = "mt-4">Selecione o edifício: </h3>
+        <form method="POST" action=".">        
+            {% csrf_token %}    
+            <select name = "edificio_id">
+                <option selected>Selecione o Edificio</option>
+                {% for relacao in edificios %}
+                    <option value = "{{relacao.edificio.id}}"> {{relacao.edificio.nome}}</option>
+                {% endfor %}
+            </select>
+            
+            <button type="submit" value="Save">Mudar</button>
+        </form>
+    </div>
     
-    <input type="submit" value="Save">
-</form>
+    <div class = "card mb-4"></div>
+    
+    <h2>{{edificio}}</h2>
+    <div class = "card mb-4"></div>
+    <h3 style="margin-bottom: 2%;">Locais ativos no edifício:</h3>
+    {% if True %}
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Local</th>
+                    
+                    <th>Data Inicio</th>
+                    <th>Data Fim</th>
+                    <th>Editar</th>
+                    <th>Adicionar Caixa</th>
+                    
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Local</th>
+                    
+                    <th>Data Inicio</th>
+                    <th>Data Fim</th>
+                    <th>Editar</th>
+                    <th>Adicionar Caixa</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                {% for local in locais_edf %}
+                    <tr>
+                        <td>{{local.nome}}</td>
+
+                        <td>{{local.data_inicio}}</td>
+                        <td>{{local.data_fim}}</td>
+                        <td><a href ="{% url 'locais_editar' local.id %}"> Editar</a></td>
+                        <td><a href ="{% url 'locais_editar' local.id %}"> Adicionar Caixa</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
 
+    {% else %}
+        
+        <h2 class = "mt-4"> O edificio não tem locais!</h2>
 
-
-
+    {% endif %}
 {% else %}
 
 

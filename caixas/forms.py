@@ -1,7 +1,7 @@
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import fields
+from django.forms import fields, widgets
 from django.shortcuts import redirect
 from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
@@ -12,7 +12,7 @@ class FormAdicionarGestor(forms.ModelForm):
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
-    password = forms.PasswordInput()
+    password = forms.CharField(widget=forms.PasswordInput)
     is_supergestor = forms.BooleanField(required=False, initial=False, label = "Supergestor")
     
     
@@ -118,12 +118,8 @@ class Form_Edf_Gestor(forms.ModelForm):
         edificio = cleaned_data['edificio']
         data_inicio = cleaned_data['data_inicio']
         data_fim = cleaned_data['data_fim']
-        if(Rel_Gestor_Edificio.objects.filter(data_inicio=data_inicio, gestor=gestor, edificio = edificio, data_fim=data_fim)):
-             
+        if(Rel_Gestor_Edificio.objects.filter(data_inicio=data_inicio, gestor=gestor, edificio = edificio, data_fim=data_fim).exists()):
             raise forms.ValidationError("Já existe uma relação com esses dados")
-
-        
-
         if(data_fim != None):
             if(data_inicio>data_fim):
                 raise forms.ValidationError("A data final não pode ser anterior à inicial")    

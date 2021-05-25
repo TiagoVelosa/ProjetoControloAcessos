@@ -8,6 +8,7 @@ from users.models import Gestor
 
 class FormRegisto(UserCreationForm):
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
+    
 
     class Meta:
         model = Gestor
