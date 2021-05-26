@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Edificios
+Caixas
 {% endblock %}
 
 {% block content %}
@@ -59,8 +59,9 @@ Edificios
 {% endif %}
 
 {% elif total > 1 %}
+<div style = "display: flex; flex-direction: row; justify-content: space-around;">
     <div style="display: flex; flex-direction: row; align-items: baseline ;">
-        <h3 class = "mt-4">Selecione o edifício: </h3>
+        <h5 class = "mt-4">Selecione o edifício: </h5>
         <form method="POST" action=".">        
             {% csrf_token %}    
             <select name = "edificio_id">
@@ -69,53 +70,68 @@ Edificios
                     <option value = "{{relacao.edificio.id}}"> {{relacao.edificio.nome}}</option>
                 {% endfor %}
             </select>
-            
             <button type="submit" value="Save">Mudar</button>
         </form>
+        
     </div>
+    <div div style="display: flex; flex-direction: row; align-items: baseline ;">
+        <h5 class = "mt-4">Selecione o Local: </h5>
+            <form method="POST" action="."> 
+                {% csrf_token %}    
+                <select name = "local_id">
+                    <option selected>Selecione o Local</option>
+                    {% for local in locais_edf %}
+                        <option value = "{{local.id}}"> {{local.nome}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" value="Save">Mudar</button>
+            </form>
+    </div>
+</div>
+    
     
     <div class = "card mb-4"></div>
     
     <div style="display: flex; flex-direction: row;">
-        <h2 style="width: 50%;">{{edificio}}</h2>
+        <h3 style="width: 50%;">{{edificio}} - {{local}}</h3>
         <div style= "width: 50%; text-align: right;">
-            <a href="" style="font-size: 20px;">Adicionar Local</a>
+            <a href="" style="font-size: 20px;">Adicionar Caixa</a>
         </div> 
     </div>
     <div class = "card mb-4"></div>
-    <h3 style="margin-bottom: 2%;">Locais ativos no edifício:</h3>
+    <h3 style="margin-bottom: 2%;">Caixas ativas no edifício:</h3>
     {% if True %}
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th>Local</th>
-                    
+                    <th>Caixa</th>
+                    <th>IP</th>                    
                     <th>Data Inicio</th>
                     <th>Data Fim</th>
                     <th>Editar</th>
-                    <th>Adicionar Caixa</th>
+                    
                     
                 </tr>
             </thead>
             <tfoot>
                 <tr>
-                    <th>Local</th>
-                    
+                    <th>Caixa</th>
+                    <th>IP</th>                  
                     <th>Data Inicio</th>
                     <th>Data Fim</th>
                     <th>Editar</th>
-                    <th>Adicionar Caixa</th>
+                    
                 </tr>
             </tfoot>
             <tbody>
-                {% for local in locais_edf %}
+                {% for relacao_caixa in caixas_local %}
                     <tr>
-                        <td>{{local.nome}}</td>
-
-                        <td>{{local.data_inicio}}</td>
-                        <td>{{local.data_fim}}</td>
-                        <td><a href ="{% url 'locais_editar' local.id %}"> Editar</a></td>
-                        <td><a href ="{% url 'locais_editar' local.id %}"> Adicionar Caixa</a></td>
+                        <td>{{relacao_caixa.caixa_id}}</td>
+                        <td>{{relacao_caixa.caixa.ip}}</td>
+                        <td>{{relacao_caixa.data_inicio}}</td>
+                        <td>{{relacao_caixa.data_fim}}</td>
+                        <td><a href =""> Editar</a></td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>

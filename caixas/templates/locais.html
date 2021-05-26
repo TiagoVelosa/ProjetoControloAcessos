@@ -5,7 +5,7 @@ Locais
 {% endblock %}
 
 {% block content %}
-<h2>Criar Locais</h2>
+<h2>Adicionar Local</h2>
 <form method ="post">
     {% csrf_token %}
     {% if dados_invalidos %}
@@ -13,6 +13,9 @@ Locais
             <p>{{dados_invalidos}}</p>
         </div>
     {% endif %}
+    {% for error in locais_form.non_field_errors %}
+                <p style="color: red;"> {{error}} </p>
+            {% endfor %}
     {% for field in locais_form %}
         <p>
             {{field.label_tag}}
@@ -33,7 +36,8 @@ Locais
                 </div>
             {% endif %}
     
-    <button type = "submit">Sumbmit</button>
+    <button type = "submit">Adicionar</button>
 
 </form>
+<h4 style="margin-top: 4%;">{{mensagem}} </h4>
 {% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cartões
+{% endblock %}
+
+{% block content %}
+<div style="flex-direction: row; display: flex; ">
+    <h3 style="width: 95%; color: rgb(52, 58, 64);">Criar Cartão</h3>
+    <button onclick="Hide('Adicionar_Cartao')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
+</div>
+<div class = "card mb-4"></div>
+<div id = "Adicionar_Cartao"> 
+    <form method ="post"> 
+        
+        {% csrf_token %}
+        {% for field in cartao_form %}
+            <p>
+                {{field.label_tag}}
+                {{field}}
+
+                {% if field.help_text %}
+                    <small style= "color: grey;">{{field.help_text}}</small>
+                {% endif %}
+                {% for error in field.erros %}
+                    <p style="color: red;">{{field.help_text}}</p>
+                {% endfor %}                        
+            </p>
+        {% endfor %}
+        <button type = "submit" style="margin-bottom: 2%;">Criar Pessoa</button>
+    </form>
+</div>
+
+
+
+<div style="flex-direction: row; display: flex; ">
+    <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Cartão</h3>
+    <button onclick="Hide('Editar_Cartao')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
+</div>
+<div class = "card mb-4"></div>
+<div id = "Editar_Cartao">    
+    <form method ="post"> 
+        {% csrf_token %}
+        {% for error in form_editar_cartao.non_field_errors %}
+            <p style="color: red;"> {{error}} </p>
+        {% endfor %}
+        {% for field in form_editar_cartao %}
+            <p>
+                {{field.label_tag}}
+                {{field}}
+
+                {% if field.help_text %}
+                    <small style= "color: grey;">{{field.help_text}}</small>
+                {% endif %}
+                {% for error in field.erros %}
+                    <p style="color: red;">{{error}}</p>
+                {% endfor %}                        
+            </p>
+        {% endfor %}
+        <button type = "submit" style="margin-bottom: 2%;">Editar Cartão</button>
+    </form>
+</div>
+
+
+
+
+
+
+<div style="flex-direction: row; display: flex; ">
+    <h3 style="width: 95%; color: rgb(52, 58, 64);">Associar Cartão a Pessoa</h3>
+    <button onclick="Hide('Associar_Cartao_Pessoa')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
+</div>
+<div class = "card mb-4"></div>
+<div id = "Associar_Cartao_Pessoa">    
+    <form method ="post"> 
+        {% csrf_token %}
+        {% for error in form_rel_pessoa_cartao.non_field_errors %}
+            <p style="color: red;"> {{error}} </p>
+        {% endfor %}
+        {% for field in form_rel_pessoa_cartao %}
+            <p>
+                {{field.label_tag}}
+                {{field}}
+
+                {% if field.help_text %}
+                    <small style= "color: grey;">{{field.help_text}}</small>
+                {% endif %}
+                {% for error in field.erros %}
+                    <p style="color: red;">{{error}}</p>
+                {% endfor %}                        
+            </p>
+        {% endfor %}
+        <button type = "submit" style="margin-bottom: 2%;">Associar Cartão</button>
+    </form>
+</div>
+
+
+
+
+<script>
+    function Hide(componente) {
+      var x = document.getElementById(componente);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+</script>
+
+{% endblock %}

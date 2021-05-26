@@ -1,7 +1,7 @@
  
 from django.shortcuts import render, redirect
-from caixas.forms import EdificioForm,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor
-from caixas.models import Edificio, Local, Pessoa, Rel_Gestor_Edificio
+from caixas.forms import EdificioForm, Form_Caixa_Local,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor, CartaoForm, Form_Cartao_Pessoa,Form_Caixa
+from caixas.models import Edificio, Local, Pessoa, Rel_Gestor_Edificio, Cartao,Pessoa_Cartao,Caixa, Caixa_Local
 from users.models import Gestor
 
 # Create your views here.
@@ -11,10 +11,18 @@ def teste_view(request):
 
 def edificio_view(request):
     context = {}
+    
     current_user = request.user
     tem_edificio = Rel_Gestor_Edificio.objects.filter(gestor_id=current_user.id)
+    total = tem_edificio.count()
     context["edificios"] = tem_edificio
-    if('edificio_id' in request.POST):
+    context["total"] = total
+    if(total ==1):
+        edificio = Edificio.objects.get(id = tem_edificio[0].edificio_id)
+        local = Local.objects.filter(edificio_id = edificio.id)
+        context["locais_edf"] = local
+        context["edificio"] = edificio.nome
+    elif('edificio_id' in request.POST):
         locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
         context["locais_edf"] = locais
         context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
@@ -139,6 +147,31 @@ def gestores_view(request):
     return render(request, "gestores.html",context)
 
 
+def adicionar_caixa_view(request):
+    context = {}
+    form_caixa = Form_Caixa()
+    form_caixa_local = Form_Caixa_Local()
+    if request.POST:        
+        form_caixa = Form_Caixa(request.POST)
+        form_caixa_local = Form_Caixa_Local(request.POST)
+        if form_caixa.is_valid():
+            print(request.POST)  
+            form_caixa.save()
+            form_caixa = Form_Caixa()
+            context['mensagem'] = "Caixa adicionado com sucesso! " 
+        if form_caixa_local.is_valid():
+            form_caixa_local.save()
+            form_caixa_local = Form_Caixa_Local()
+            context['mensagem'] = "Relação adicionada com sucesso! "              
+        
+    else:        
+        form_caixa = Form_Caixa()
+        form_caixa_local = Form_Caixa_Local()
+
+    context['form_caixa'] = form_caixa
+    context['form_caixa_local'] = form_caixa_local
+    return render(request, "adicionar_caixa.html",context)
+
 def locais_view(request):    
     context = {}
     if request.POST:        
@@ -158,7 +191,10 @@ def locais_view(request):
                 local.ativo = False
 
             local.save()
-            return redirect('locais')            
+            form = LocalForm()
+            context['mensagem'] = "Local adicionado com sucesso! "
+
+                      
         
     else:        
         form = LocalForm()
@@ -167,23 +203,154 @@ def locais_view(request):
     return render(request, "locais.html",context)
 
 
+
+def cartoes_view(request):
+    print(request.POST)   
+    context = {}
+    todos_cartoes = Cartao.objects.all()
+    todos_pessoas = Pessoa.objects.all()
+    todas_relacoes = Pessoa_Cartao.objects.all()
+    context = {
+        'todos_cartoes': todos_cartoes,
+        'todos_pessoas': todos_pessoas,
+        'todas_relacoes': todas_relacoes
+    }
+    if request.POST:
+        form_cartao = CartaoForm(request.POST) 
+        form_cartao_pessoa = Form_Cartao_Pessoa(request.POST)
+        form_editar_cartao = CartaoForm(request.POST)
+        if form_cartao.is_valid():
+            cartao = Cartao()          
+            cartao.ativo = request.POST['ativo']
+            cartao.codigo_hexa = request.POST['codigo_hexa']
+            cartao.save()
+            return redirect('cartoes')
+        if form_cartao_pessoa.is_valid():
+
+            form_cartao_pessoa.save()
+            return redirect('cartoes')
+        if form_editar_cartao.isvalid():
+            cartao = Cartao()  
+            relacao = Pessoa_Cartao.objects.get(id=request.POST['form_editar_cartao'])
+            form_cartao_pessoa = Form_Cartao_Pessoa(instance=relacao)
+            context['form_rel_pessoa_cartao'] = form_cartao_pessoa      
+            cartao.ativo = request.POST['ativo']
+            cartao.codigo_hexa = request.POST['codigo_hexa']
+            cartao.save()
+            return redirect('cartoes')
+    else:        
+        form_cartao_pessoa = Form_Cartao_Pessoa()
+        form_cartao = CartaoForm()
+        form_editar_cartao = CartaoForm()
+    context['cartao_form'] = form_cartao
+    context['form_rel_pessoa_cartao'] = form_cartao_pessoa
+    return render(request,"cartoes.html" ,context)
+
+def caixas_view(request):
+    context = {}    
+    current_user = request.user
+    tem_edificio = Rel_Gestor_Edificio.objects.filter(gestor_id=current_user.id)
+    total = tem_edificio.count()
+    context["edificios"] = tem_edificio
+    context["total"] = total
+    if(total ==1):
+        edificio = Edificio.objects.get(id = tem_edificio[0].edificio_id)
+        local = Local.objects.filter(edificio_id = edificio.id)
+        context["locais_edf"] = local
+        context["edificio"] = edificio.nome
+    elif('edificio_id' in request.POST):
+        locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
+        context["locais_edf"] = locais
+        context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
+    elif('local_id' in request.POST):
+        edificio = Edificio.objects.get(id =Local.objects.get(id = request.POST['local_id']).edificio_id)
+        locais = Local.objects.filter(edificio_id = edificio.id)
+        caixas_local = Caixa_Local.objects.filter(local_id = request.POST['local_id'])
+        context["caixas_local"] = caixas_local
+        context["local"] = Local.objects.get(id = request.POST['local_id']).nome
+        context["locais_edf"] = locais
+        context["edificio"] = edificio
+
+    return render(request,'caixas.html',context)
+
+
 def pessoas_view(request):    
     context = {}
     if request.POST:        
         form = PessoaForm(request.POST)
-        context['pessoa_form'] = form
+        context['form_pessoa'] = form
         if form.is_valid():
-            print(request.POST)
-            pessoa = Pessoa()            
-            pessoa.first_name = request.POST['first_name']
-            pessoa.descricao = request.POST['descricao']
-            pessoa.email = request.POST['email']
-            pessoa.last_name = request.POST['last_name']
-            pessoa.phone_number = request.POST['phone_number']
-            pessoa.save()
+            form.save()
             return redirect('pessoas')      
     else:        
         form = PessoaForm()
         
-    context['pessoa_form'] = form
+    context['form_pessoa'] = form
     return render(request, "pessoas.html",context)
+
+def pessoas_editar_view(request):    
+    context = {}
+    try:
+        pessoa = Pessoa.objects.get(id=id)
+    except Pessoa.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Pessoa não encontrada!"
+    form_pessoa = PessoaForm(instance=pessoa)
+    
+    if request.POST:        
+        form = PessoaForm(request.POST,instance=pessoa)
+        context['form_editar_pessoa'] = form
+        if form.is_valid():
+           
+            form.save()
+            context['sucesso'] = "Pessoa editada com sucesso!"
+            form_pessoa = PessoaForm()
+    
+    context['form_editar_pessoa']=form_pessoa
+    return render(request,'pessoas_editar.html',context)
+
+def cartoes_view(request):
+    print(request.POST)   
+    context = {}
+    todos_cartoes = Cartao.objects.all()
+    todos_pessoas = Pessoa.objects.all()
+    todas_relacoes = Pessoa_Cartao.objects.all()
+    context = {
+        'todos_cartoes': todos_cartoes,
+        'todos_pessoas': todos_pessoas,
+        'todas_relacoes': todas_relacoes
+    }
+    if request.POST:
+        form_cartao = CartaoForm(request.POST) 
+        form_cartao_pessoa = Form_Cartao_Pessoa(request.POST)
+        if form_cartao.is_valid():
+            form_cartao.save()
+            return redirect('cartoes')
+        if form_cartao_pessoa.is_valid():
+            form_cartao_pessoa.save()
+            return redirect('cartoes')
+    else:        
+        form_cartao_pessoa = Form_Cartao_Pessoa()
+        form_cartao = CartaoForm()
+    context['cartao_form'] = form_cartao
+    context['form_rel_pessoa_cartao'] = form_cartao_pessoa
+    return render(request,"cartoes.html" ,context)
+
+def cartoes_editar_view(request,id):
+    context = {}
+    try:
+        cartao = Cartao.objects.get(id=id)
+    except Cartao.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Cartão não encontrado!"
+    form_cartao_pessoa = Form_Cartao_Pessoa(instance=cartao)
+    
+    if request.POST:        
+        form = Form_Cartao_Pessoa(request.POST,instance=cartao)
+        context['form_editar_cartao'] = form
+        if form.is_valid():
+           
+            form.save()
+            context['sucesso'] = "Cartão editado com sucesso!"
+            form_cartao_pessoa = Form_Cartao_Pessoa()
+    
+    context['form_editar_cartao']=form_cartao_pessoa
+    return render(request,'cartoes_editar.html',context)

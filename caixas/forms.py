@@ -43,6 +43,21 @@ class LocalForm(forms.ModelForm):
         model = Local
         fields = ("nome","descricao","edificio","data_inicio","data_fim","ativo")
 
+    def clean(self):
+        cleaned_data = super(LocalForm, self).clean()
+        if not cleaned_data['data_fim']:
+            cleaned_data['data_fim'] = None
+
+        nome = cleaned_data['nome']
+        descricao = cleaned_data['descricao']
+        data_inicio = cleaned_data['data_inicio']
+        data_fim = cleaned_data['data_fim']
+        if(Local.objects.filter(data_inicio=data_inicio, nome=nome, descricao = descricao, data_fim=data_fim).exists()):
+            raise forms.ValidationError("Esse local já existe! ")
+        if(data_fim != None):
+            if(data_inicio>data_fim):
+                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
+        return cleaned_data
 
 class PessoaForm(forms.ModelForm):
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
@@ -57,12 +72,10 @@ class PessoaForm(forms.ModelForm):
 
 class CartaoForm(forms.ModelForm):
     codigo_hexa = forms.CharField(max_length=50)
-    data_desativacao = forms.DateInput()
-    
 
     class Meta:
         model = Cartao
-        fields = ("codigo_hexa","data_desativacao")
+        fields = ("codigo_hexa",)
 
 class Form_Cartao_Pessoa(forms.ModelForm):
     data_inicio = forms.DateInput()
@@ -86,18 +99,14 @@ class Form_Caixa_Local(forms.ModelForm):
         fields = ("local","caixa","data_inicio","data_fim")
 
 class Form_Caixa(forms.ModelForm):
-    ativo = forms.BooleanField()
+    
     ip = forms.CharField(max_length=50)
     mac_adress = forms.CharField(max_length=50)
     token_seguranca = forms.CharField(max_length=50)
-    no_uso = forms.BooleanField()
-    data_desativacao = forms.DateInput()
-    
-    local_atual_id  = forms.ModelChoiceField(queryset=Local.objects.all(),empty_label="Selecione o Local",initial=0)
-
+    ativo = forms.BooleanField()
     class Meta:
         model = Caixa
-        fields = ("ativo","ip","token_seguranca","no_uso","data_desativacao","local_atual_id")
+        fields = ("ip","mac_adress","token_seguranca","ativo")
 
 class Form_Edf_Gestor(forms.ModelForm):
     data_inicio = forms.DateInput()

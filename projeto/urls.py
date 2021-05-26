@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from users.views import home_view, register_view, logout_view,login_view
 from caixas.views import teste_view, input_view,gestores_view, locais_view ,pessoas_view,edificio_view,gestores_editar,local_editar_view
-
+from caixas.views import cartoes_view, caixas_view, adicionar_caixa_view, pessoas_editar_view, cartoes_editar_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,11 +29,14 @@ urlpatterns = [
     path('input/', input_view, name ="input"),
     path('gestores/adicionar', gestores_view, name ="gestores"),
     path('gestores/editar', gestores_editar, name ="gestores_editar"),
-    path('caixas/', home_view, name ="caixas"),
+    path('caixas/', caixas_view, name ="caixas"),
     path('locais/', locais_view, name ="locais"),
     path('locais/editar/<int:id>',local_editar_view, name ="locais_editar"),
     path('edificios/', edificio_view, name ="edificios"),
     path('pessoas/', pessoas_view, name ="pessoas"),
     path('relatorios/', home_view, name ="relatorios"),
-    path('cartoes/', home_view, name ="cartoes"),
+    path('cartoes/', cartoes_view, name ="cartoes"),
+    path('caixas/adicionar',adicionar_caixa_view, name = "adicionar_caixa"),
+    path('cartoes/editar/<int:id>', cartoes_editar_view, name ="cartoes_editar"),
+    path('pessoas/editar/<int:id>', pessoas_editar_view, name ="pessoas_editar"),
 ]
