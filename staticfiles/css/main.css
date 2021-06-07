@@ -10247,3 +10247,13 @@ body {
 .sb-sidenav-light .sb-sidenav-footer {
   background-color: #e9ecef;
 }
+
+.cartao{
+  background-color: black;
+  border: black;
+  border-radius: 1%;
+}
+.cartao:hover{
+  background-color: #007bff;
+
+}

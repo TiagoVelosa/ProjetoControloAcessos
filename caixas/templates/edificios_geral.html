@@ -1,0 +1,46 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}
+Edificios
+{% endblock %}
+
+
+
+{% block content %}
+<h1 style="margin-top:2% ;">Edificios geral</h1>
+<div class = "card mb-4"></div>
+
+{% if edificios %}
+    {% for edf in edificios %}
+        <div class = "cartao2" style="border-color: rgb(189, 189, 189); justify-content: space-between; " onclick="location.href='{% url 'caixas' %}' " >
+            <h2 style="margin-top: 1%; margin-left: 1%;">{{edf.edificio.nome}}</h2>
+            <h5 style="color: gray; margin-left: 1%;">{{edf.edificio.descricao}}</h5>
+            
+                {% for key, values in gestores.items %}                    
+                    {% if key == edf.edificio.nome%}
+                        
+                        <h5 style="color: gray; margin-left: 1%;"> {% for v in values %} {{v}}, {% endfor %}</h5>
+                        
+                    {% endif %}
+                {% endfor %}
+            
+            
+        </div>        
+    {% endfor %}
+{% endif %}
+<script>
+    
+    document.getElementById("demo").addEventListener("mouseover", mouseOver);
+    document.getElementById("demo").addEventListener("mouseout", mouseOut);
+    
+    function mouseOver(id) {
+      document.getElementById(id).style.backgroundColor = "rgb(236,236,236)";
+    }
+    
+    function mouseOut(id) {
+      document.getElementById(id).style.backgroundColor = "rgb(236,236,236)";
+    }
+    </script>
+{% endblock %}

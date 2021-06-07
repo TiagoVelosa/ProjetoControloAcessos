@@ -16,8 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from users.views import home_view, register_view, logout_view,login_view
-from caixas.views import teste_view, input_view,gestores_view, locais_view ,pessoas_view,edificio_view,gestores_editar,local_editar_view
-from caixas.views import cartoes_view, caixas_view, adicionar_caixa_view, pessoas_editar_view, cartoes_editar_view
+from caixas.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,11 +31,15 @@ urlpatterns = [
     path('caixas/', caixas_view, name ="caixas"),
     path('locais/', locais_view, name ="locais"),
     path('locais/editar/<int:id>',local_editar_view, name ="locais_editar"),
-    path('edificios/', edificio_view, name ="edificios"),
+    path('caixas/editar/<int:id>',caixas_editar_view, name ="caixas_editar"),
+    path('caixas/<int:id_local>', caixas_view_ids,  name= "caixas_ids"),
+    path('edificios/', edf_geral_view, name ="edificios"),
     path('pessoas/', pessoas_view, name ="pessoas"),
-    path('relatorios/', home_view, name ="relatorios"),
+    path('registos/', registos_view, name ="registos"),
     path('cartoes/', cartoes_view, name ="cartoes"),
     path('caixas/adicionar',adicionar_caixa_view, name = "adicionar_caixa"),
     path('cartoes/editar/<int:id>', cartoes_editar_view, name ="cartoes_editar"),
     path('pessoas/editar/<int:id>', pessoas_editar_view, name ="pessoas_editar"),
+    path('edificios/historico/', historico_edf_view, name = "edf_historico" ),
+    path ('caixas/inativas',caixas_inativas, name = "caixas_inativas")
 ]

@@ -1,0 +1,9 @@
+.cartao2{
+    border: 1px solid gray;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 10px;
+    
+    }
+.cartao2:hover{
+    background-color: #cccccc;}

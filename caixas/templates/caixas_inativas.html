@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+Caixas
+{% endblock %}
+
+{% block content %}
+
+{% if caixas_inativas %}
+<h3 style="margin-bottom: 2%;">Lista de caixas inativas</h3>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Caixa</th>
+                <th>IP</th>
+                <th>Data criação</th>
+                <th>Data desativação</th>
+                <th>Ativar</th>
+                
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Caixa</th>
+                <th>IP</th>
+                <th>Data criação</th>
+                <th>Data desativação</th>
+                <th>Ativar</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for caixa in caixas_inativas %}
+                <tr>
+                    <td>{{caixa.id}}</td>
+                    <td>{{caixa.ip}}</td>
+                    <td>{{caixa.data_criacao}}</td>
+                    {% if caixa.data_desativacao %}
+                        <td>{{caixa.data_desativacao}}</td>
+                    {% else %}
+                        <td>{{caixa.data_criacao}}</td>
+                    {%endif%}
+                    <td><a href ="{% url 'adicionar_caixa'%}"> Ativar Caixa</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% else %}
+    
+    <h2 class = "mt-4"> Não existem caixas inativas!</h2>
+
+{% endif %}
+{% endblock %}

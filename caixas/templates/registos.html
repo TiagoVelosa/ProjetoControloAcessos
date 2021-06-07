@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}
+Registos
+{% endblock %}
+
+{% block content %}
+
+<style media = "print">
+    body {
+          background: red;
+          color: black;
+        }
+    table, th,td {
+        border: 1px solid rgb(0, 0, 0);
+        border-collapse: collapse;
+    }
+</style>
+<style>
+    thead, tfoot {
+        background-color: grey;
+    }
+    body {
+          background: white;
+          color: black;
+        }
+    table, th,td {
+        border: 1px solid rgb(0, 0, 0);
+        border-collapse: collapse;
+    }
+</style>
+
+<style>
+    @media print {
+        
+        .not_printable {
+            visibility: hidden;
+        }
+        .Teste, .Teste * {
+            visibility:visible;
+        }
+    }
+</style>
+
+
+<div style="display: flex; flex-direction: row; margin-top: 2%;" id = "not_printable">
+    <h3 style="width: 50%;">Relatório </h3>
+    <div style= "width: 50%; text-align: right;">
+        <a href= "" onclick="window.print()" style="font-size: 20px;">Gerar PDF</a>
+    </div> 
+</div>
+
+<div class = "card mb-4"></div>
+
+<div id = "Teste" style="overflow: scroll; height: 600px;">
+    <table  width="100%" cellspacing="0" >
+        <thead style="">
+            <tr style="text-align: center; ">
+                <th rowspan = "2" style="vertical-align: middle;" >Registo</th>                
+                <th>Data Caixa</th>
+                <th>Local</th>
+                <th>Pessoa</th>                
+            </tr>
+            <tr style="text-align: center;">
+                <td >Data Servidor</td>
+                <td>ID Caixa</td>
+                <td>Cartão ID</td>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr style="text-align: center; ">
+                <th rowspan = "2" style="vertical-align: middle;" >Registo</th>                
+                <td >Data Servidor</td>
+                <td>ID Caixa</td>
+                <td>Cartão ID</td>     
+            </tr>
+            <tr style="text-align: center;">
+                <th>Data Caixa</th>
+                <th>Local</th>
+                <th>Pessoa</th> 
+                
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+            {% for registo in registos %}
+                <tr style="text-align: center;  ">
+                    <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
+                    <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
+                </tr>
+
+                <tr style="text-align: center; ">
+                    <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
+                    <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
+                    <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+    
+
+    
+
+
+
+    
+
+
+    
+
+
+
+{% endblock %}

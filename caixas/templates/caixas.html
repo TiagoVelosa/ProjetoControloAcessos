@@ -91,15 +91,21 @@ Caixas
     
     
     <div class = "card mb-4"></div>
-    
-    <div style="display: flex; flex-direction: row;">
-        <h3 style="width: 50%;">{{edificio}} - {{local}}</h3>
-        <div style= "width: 50%; text-align: right;">
-            <a href="" style="font-size: 20px;">Adicionar Caixa</a>
-        </div> 
-    </div>
+    {% if edificio %}
+            <div style="display: flex; flex-direction: row;">
+                <h3 style="width: 50%;">{{edificio}} - {{local}}</h3>
+                <div style= "width: 50%; text-align: right;">
+                    <a href="{% url 'adicionar_caixa' %}" style="font-size: 20px;">Adicionar Caixa</a>
+                </div> 
+            </div>
+    {% else %}
+        <div>
+            <p>É necessário selecionar primeiro o edificio e depois o local!</p>
+        </div>
+
+    {% endif %}
     <div class = "card mb-4"></div>
-    <h3 style="margin-bottom: 2%;">Caixas ativas no edifício:</h3>
+    <h3 style="margin-bottom: 2%;">Caixas ativas no local:</h3>
     {% if True %}
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
@@ -109,6 +115,7 @@ Caixas
                     <th>Data Inicio</th>
                     <th>Data Fim</th>
                     <th>Editar</th>
+                    <th>Remover</th>
                     
                     
                 </tr>
@@ -120,6 +127,7 @@ Caixas
                     <th>Data Inicio</th>
                     <th>Data Fim</th>
                     <th>Editar</th>
+                    <th>Remover</th>
                     
                 </tr>
             </tfoot>
@@ -130,7 +138,9 @@ Caixas
                         <td>{{relacao_caixa.caixa.ip}}</td>
                         <td>{{relacao_caixa.data_inicio}}</td>
                         <td>{{relacao_caixa.data_fim}}</td>
-                        <td><a href =""> Editar</a></td>
+                        <td><a href ="{% url 'caixas_editar' relacao_caixa.caixa_id %}"> [Editar]</a></td>
+                        <td><a href= "">[Remover]</a></td>
+                        
                         
                     </tr>
                 {% endfor %}

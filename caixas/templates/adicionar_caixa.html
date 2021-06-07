@@ -5,75 +5,91 @@ Caixa
 {% endblock %}
 
 {% block content %}
-<h2>Adicionar Caixa</h2>
-<form method ="post">
-    {% csrf_token %}
-    {% if dados_invalidos %}
-        <div style = "color: red;">
-            <p>{{dados_invalidos}}</p>
-        </div>
-    {% endif %}
-    {% for error in form_caixa.non_field_errors %}
-                <p style="color: red;"> {{error}} </p>
-            {% endfor %}
-    {% for field in form_caixa %}
-        <p>
-            {{field.label_tag}}
-            {{field}}
 
-            {% if field.help_text %}
-                <small style= "color: grey;">{{field.help_text}}</small>
+<div style="display: flex; flex-direction: row;">
+    <div style="width: 50%;">
+        <h2>Adicionar Caixa</h2>
+        <form method ="post">
+            {% csrf_token %}
+            {% if dados_invalidos %}
+                <div style = "color: red;">
+                    <p>{{dados_invalidos}}</p>
+                </div>
             {% endif %}
-            {% for error in field.erros %}
-                <p style="color: red;">{{field.help_text}}</p>
-            {% endfor %}                        
-        </p>
-    {% endfor %}
+            {% for field in form_caixa %}
+                <p>
+                    {{field.label_tag}}
+                    {{field}}
 
-    {% if form_caixa.non_field_errors %}
+                    {% if field.help_text %}
+                        <small style= "color: grey;">{{field.help_text}}</small>
+                    {% endif %}
+                    {% for error in field.erros %}
+                        <p style="color: red;">{{field.help_text}}</p>
+                    {% endfor %}                        
+                </p>
+            {% endfor %}
+
+            {% if form_caixa.non_field_errors %}
                 <div style = "color: red;">
                     <p>{{form_caixa.non_field_errors}}</p>
                 </div>
             {% endif %}
-    
-    <button type = "submit">Adicionar</button>
+            
+            
+            <button type = "submit">Adicionar</button>
 
-</form>
+        </form>
 
-
-<h2>Associar Caixa</h2>
-<form method ="post">
-    {% csrf_token %}
-    {% if dados_invalidos %}
-        <div style = "color: red;">
-            <p>{{dados_invalidos}}</p>
-        </div>
-    {% endif %}
-    {% for error in form_caixa_local.non_field_errors %}
-                <p style="color: red;"> {{error}} </p>
-            {% endfor %}
-    {% for field in form_caixa_local %}
-        <p>
-            {{field.label_tag}}
-            {{field}}
-
-            {% if field.help_text %}
-                <small style= "color: grey;">{{field.help_text}}</small>
-            {% endif %}
-            {% for error in field.erros %}
-                <p style="color: red;">{{field.help_text}}</p>
-            {% endfor %}                        
-        </p>
-    {% endfor %}
-
-    {% if form_caixa_local.non_field_errors %}
+    </div>
+    <div style="width: 50%;">
+        <h2>Associar Caixa</h2>
+        <form method ="post">
+            {% csrf_token %}
+            {% if dados_invalidos %}
                 <div style = "color: red;">
-                    <p>{{form_caixa_local.non_field_errors}}</p>
+                    <p>{{dados_invalidos}}</p>
                 </div>
             {% endif %}
-    
-    <button type = "submit">Associar</button>
+            {% for field in form_caixa_local %}
+                <p>
+                    {{field.label_tag}}
+                    {{field}}
 
-</form>
-<h4 style="margin-top: 4%;">{{mensagem}} </h4>
+                    {% if field.help_text %}
+                        <small style= "color: grey;">{{field.help_text}}</small>
+                    {% endif %}
+                    {% for error in field.erros %}
+                        <p style="color: red;">{{field.help_text}}</p>
+                    {% endfor %}                        
+                </p>
+            {% endfor %}
+
+            {% if form_caixa_local.non_field_errors %}
+                        <div style = "color: red;">
+                            <p>{{form_caixa_local.non_field_errors}}</p>
+                        </div>
+                    {% endif %}
+            
+            <button type = "submit">Associar</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+    
+
+{% if messages %}
+   <ul class="messages">
+      {% for message in messages %}
+         <li{% if message.tags %} class=""{% endif %}>{{ message }}</li>
+      {% endfor %}
+   </ul>
+{% endif %}
+
+
 {% endblock %}

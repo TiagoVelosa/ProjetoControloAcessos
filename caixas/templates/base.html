@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <link rel="stylesheet"  href="{%  static  'css/custom.css'  %}">
     <link rel="stylesheet"  href="{%  static  'css/main.css'  %}">
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
@@ -15,7 +15,7 @@
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <div style="width: 90%;">
-            <a class="navbar-brand" href="{% url 'home' %}">Controlo de Acessos</a>
+            <a class="navbar-brand" href="{% url 'home' %}">Controlo de Acessos - UMa</a>
         </div>
         
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href=""><i class="fas fa-bars"></i></button>
@@ -47,6 +47,7 @@
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="{% url 'gestores' %}">Adicionar</a>
                                 <a class="nav-link" href="{% url 'gestores_editar' %}">Editar</a>
+                                
                             </nav>
                         </div>
                         {% endif %}
@@ -59,8 +60,9 @@
                         </a>
                         <div class="collapse" id="collapseEdificio" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{% url 'edificios' %}">Lista dos locais</a>
+                                <a class="nav-link" href="{% url 'edificios' %}">Locais ativos!</a>
                                 <a class="nav-link" href="{% url 'locais' %}">Adicionar local</a>
+                                <a class="nav-link" href="{% url 'edf_historico'%}">Histórico de locais!</a>
                             </nav>
                         </div>
 
@@ -71,8 +73,9 @@
                         </a>
                         <div class="collapse" id="collapseCaixas" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{% url 'caixas' %}">Static Navigation</a>
-                                <a class="nav-link" href=""></a>
+                                <a class="nav-link" href="{% url 'caixas' %}">Lista de caixas num local!</a>
+                                <a class="nav-link" href="{% url 'caixas_inativas' %}">Lista de caixas inativas!</a>
+                                <a class="nav-link" href="{% url 'adicionar_caixa'%}">Adicionar caixa!</a>
                             </nav>
                         </div>
                         
@@ -107,7 +110,7 @@
                         </a>
                         <div class="collapse" id="collapseRelatorios" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{% url 'relatorios' %}">Static Navigation</a>
+                                <a class="nav-link" href="{% url 'registos' %}">Static Navigation</a>
                                 <a class="nav-link" href=""></a>
                             </nav>
                         </div>

@@ -1,20 +1,50 @@
  
+
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from caixas.forms import EdificioForm, Form_Caixa_Local,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor, CartaoForm, Form_Cartao_Pessoa,Form_Caixa
-from caixas.models import Edificio, Local, Pessoa, Rel_Gestor_Edificio, Cartao,Pessoa_Cartao,Caixa, Caixa_Local
+from caixas.models import Edificio, Local, Pessoa, Registo, Rel_Gestor_Edificio, Cartao,Pessoa_Cartao,Caixa, Caixa_Local
 from users.models import Gestor
+import io
+from django.http import FileResponse
+
 
 # Create your views here.
 
 def teste_view(request):
     return render(request,'base.html')
 
-def edificio_view(request):
+def edf_geral_view(request):
     context = {}
-    
+    gestores = {}
     current_user = request.user
-    tem_edificio = Rel_Gestor_Edificio.objects.filter(gestor_id=current_user.id)
-    total = tem_edificio.count()
+    relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
+    for rel in relacoes:
+        gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [rel.edificio_id])
+        edificio = Edificio.objects.get(id = rel.edificio_id)
+        nome_gestores = []
+        for gestor in gestores_edf:
+            nome_gestores.append(gestor.gestor)
+        gestores[edificio.nome] = nome_gestores
+
+    context["gestores"] = gestores    
+    context["edificios"] = relacoes
+    print(context)
+    return render(request, 'edificios_geral.html', context)
+
+
+def caixas_inativas(request):
+    context = {}
+    caixas_inativas  = Caixa.objects.filter(ativo = 0)
+    context['caixas_inativas'] = caixas_inativas
+
+    return render(request, "caixas_inativas.html",context)
+
+def historico_edf_view(request):
+    context = {}
+    current_user = request.user
+    tem_edificio = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
+    total = len(tem_edificio)
     context["edificios"] = tem_edificio
     context["total"] = total
     if(total ==1):
@@ -22,7 +52,26 @@ def edificio_view(request):
         local = Local.objects.filter(edificio_id = edificio.id)
         context["locais_edf"] = local
         context["edificio"] = edificio.nome
-    elif('edificio_id' in request.POST):
+    elif('edificio_id' in request.POST and request.POST['edificio_id'] != 'Selecione o Edificio'):
+        locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
+        context["locais_edf"] = locais
+        context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
+    return render(request,'historico_edf.html',context)
+
+def edificio_view(request):
+    #print(request.POST)
+    context = {}    
+    current_user = request.user
+    tem_edificio = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
+    total = len(tem_edificio)
+    context["edificios"] = tem_edificio
+    context["total"] = total
+    if(total ==1):
+        edificio = Edificio.objects.get(id = tem_edificio[0].edificio_id)
+        local = Local.objects.filter(edificio_id = edificio.id)
+        context["locais_edf"] = local
+        context["edificio"] = edificio.nome
+    elif('edificio_id' in request.POST and request.POST['edificio_id'] != 'Selecione o Edificio'):
         locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
         context["locais_edf"] = locais
         context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
@@ -42,19 +91,37 @@ def local_editar_view(request,id):
     if request.POST:        
         form = LocalForm(request.POST,instance=local)
         context['locais_form'] = form
-        if form.is_valid():
-           
+        if form.is_valid():           
             form.save()
             context['sucesso'] = "Local editado com sucesso!"
             form_local = LocalForm()
+            return HttpResponseRedirect("locais_editar")
     
     
     context['locais_form']=form_local
     return render(request,'locais_editar.html',context)
 
-def caixas_view(request):
-    return render(request,'caixas.html')
-
+def caixas_editar_view(request,id):
+    context = {}
+    try:
+        caixa = Caixa.objects.get(id=id)
+    except Caixa.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Caixa não encontrada!"
+    form_caixa = Form_Caixa(instance=caixa)
+    
+    if request.POST:        
+        form_caixa = Form_Caixa(request.POST,instance=caixa)
+        context['caixas_form'] = form_caixa
+        if form_caixa.is_valid():
+           
+            form_caixa.save()
+            context['sucesso'] = "Caixa editada com sucesso!"
+            form_caixa = Form_Caixa()
+            return HttpResponseRedirect("cartoes_editar")
+    
+    
+    context['caixas_form']=form_caixa
+    return render(request,'caixas_editar.html',context)
 
 def gestores_editar(request):
     print(request.POST)
@@ -94,7 +161,7 @@ def gestores_editar(request):
             edificio.nome = request.POST['nome']
             edificio.descricao = request.POST['descricao']
             edificio.save()
-            return redirect('gestores') 
+            return HttpResponseRedirect('gestores') 
 
 
 
@@ -110,17 +177,19 @@ def gestores_view(request):
         'todos_edificios': todos_edificios,
         'todos_gestores': todos_gestores
     }
-    if request.POST:       
-        form_gestor = FormAdicionarGestor(request.POST) 
+    form_edificio = EdificioForm()
+    form_gestor = FormAdicionarGestor()
+    form_edf_gestor = Form_Edf_Gestor()
+    if 'nome' in request.POST:
         form_edificio = EdificioForm(request.POST)
-        form_edf_gestor= Form_Edf_Gestor(request.POST)
-        
         if form_edificio.is_valid():
             edf = Edificio()            
             edf.nome = request.POST['nome']
             edf.descricao = request.POST['descricao']
             edf.save()
-            return redirect('gestores')    
+            return HttpResponseRedirect('gestores')
+    elif 'first_name' in request.POST:
+        form_gestor = FormAdicionarGestor(request.POST)     
         if form_gestor.is_valid():
             gestor = Gestor()
             gestor.first_name = request.POST['first_name']
@@ -132,10 +201,12 @@ def gestores_view(request):
             else:
                 gestor.is_supergestor = False
             gestor.save()
-            return redirect('gestores')
+            return HttpResponseRedirect('gestores')
+    elif 'data_inicio' in request.POST:
+        form_edf_gestor= Form_Edf_Gestor(request.POST)
         if form_edf_gestor.is_valid():            
             form_edf_gestor.save()
-            return redirect('gestores')
+            return HttpResponseRedirect('gestores')
     else:        
         form_edificio = EdificioForm()
         form_gestor = FormAdicionarGestor()
@@ -148,22 +219,31 @@ def gestores_view(request):
 
 
 def adicionar_caixa_view(request):
+    print(request.POST)
+    
     context = {}
     form_caixa = Form_Caixa()
     form_caixa_local = Form_Caixa_Local()
-    if request.POST:        
+    if 'ip' in request.POST:        
         form_caixa = Form_Caixa(request.POST)
-        form_caixa_local = Form_Caixa_Local(request.POST)
+        print(form_caixa.errors) 
         if form_caixa.is_valid():
-            print(request.POST)  
+            print(form_caixa.errors)  
             form_caixa.save()
             form_caixa = Form_Caixa()
-            context['mensagem'] = "Caixa adicionado com sucesso! " 
+            context['mensagem'] = "Caixa adicionada com sucesso!"
+            return HttpResponseRedirect("adicionar")
+        else:
+            context['erro'] = form_caixa.errors
+    elif 'local' in request.POST:
+        form_caixa_local = Form_Caixa_Local(request.POST)       
         if form_caixa_local.is_valid():
             form_caixa_local.save()
             form_caixa_local = Form_Caixa_Local()
-            context['mensagem'] = "Relação adicionada com sucesso! "              
-        
+            context['mensagem'] = "Relação adicionada com sucesso! "   
+            return HttpResponseRedirect("adicionar")           
+        else:
+            context['erro'] = form_caixa_local.errors
     else:        
         form_caixa = Form_Caixa()
         form_caixa_local = Form_Caixa_Local()
@@ -193,6 +273,7 @@ def locais_view(request):
             local.save()
             form = LocalForm()
             context['mensagem'] = "Local adicionado com sucesso! "
+            return HttpResponseRedirect("locais")
 
                       
         
@@ -224,11 +305,11 @@ def cartoes_view(request):
             cartao.ativo = request.POST['ativo']
             cartao.codigo_hexa = request.POST['codigo_hexa']
             cartao.save()
-            return redirect('cartoes')
+            return HttpResponseRedirect('cartoes')
         if form_cartao_pessoa.is_valid():
 
             form_cartao_pessoa.save()
-            return redirect('cartoes')
+            return HttpResponseRedirect('cartoes')
         if form_editar_cartao.isvalid():
             cartao = Cartao()  
             relacao = Pessoa_Cartao.objects.get(id=request.POST['form_editar_cartao'])
@@ -237,7 +318,7 @@ def cartoes_view(request):
             cartao.ativo = request.POST['ativo']
             cartao.codigo_hexa = request.POST['codigo_hexa']
             cartao.save()
-            return redirect('cartoes')
+            return HttpResponseRedirect('cartoes')
     else:        
         form_cartao_pessoa = Form_Cartao_Pessoa()
         form_cartao = CartaoForm()
@@ -273,6 +354,41 @@ def caixas_view(request):
 
     return render(request,'caixas.html',context)
 
+def caixas_view_ids(request, id_local):
+    context = {}    
+    current_user = request.user
+    tem_edificio = Rel_Gestor_Edificio.objects.filter(gestor_id=current_user.id)
+    total = tem_edificio.count()
+    context["edificios"] = tem_edificio
+    context["total"] = total
+
+    local = Local.objects.get(id = id_local)
+    edificio = Edificio.objects.get(id = local.edificio_id)
+    caixas_local = Caixa_Local.objects.filter(local_id = id_local)
+    locais = Local.objects.filter(edificio_id = edificio.id)
+    context["local"] = local.nome
+    context["caixas_local"] = caixas_local
+    context["edificio"] = edificio.nome
+    context["locais_edf"] = locais
+    if(total ==1):
+        edificio = Edificio.objects.get(id = tem_edificio[0].edificio_id)
+        local = Local.objects.filter(edificio_id = edificio.id)
+        context["locais_edf"] = local
+        context["edificio"] = edificio.nome
+    elif('edificio_id' in request.POST):
+        locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
+        context["locais_edf"] = locais
+        context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
+    elif('local_id' in request.POST):
+        edificio = Edificio.objects.get(id =Local.objects.get(id = request.POST['local_id']).edificio_id)
+        locais = Local.objects.filter(edificio_id = edificio.id)
+        caixas_local = Caixa_Local.objects.filter(local_id = request.POST['local_id'])
+        context["caixas_local"] = caixas_local
+        context["local"] = Local.objects.get(id = request.POST['local_id']).nome
+        context["locais_edf"] = locais
+        context["edificio"] = edificio
+
+    return render(request,'caixas.html',context)
 
 def pessoas_view(request):    
     context = {}
@@ -281,7 +397,7 @@ def pessoas_view(request):
         context['form_pessoa'] = form
         if form.is_valid():
             form.save()
-            return redirect('pessoas')      
+            return HttpResponseRedirect('pessoas')      
     else:        
         form = PessoaForm()
         
@@ -304,6 +420,7 @@ def pessoas_editar_view(request):
             form.save()
             context['sucesso'] = "Pessoa editada com sucesso!"
             form_pessoa = PessoaForm()
+            return HttpResponseRedirect("pessoas_editar")
     
     context['form_editar_pessoa']=form_pessoa
     return render(request,'pessoas_editar.html',context)
@@ -351,6 +468,16 @@ def cartoes_editar_view(request,id):
             form.save()
             context['sucesso'] = "Cartão editado com sucesso!"
             form_cartao_pessoa = Form_Cartao_Pessoa()
+            return HttpResponseRedirect("cartao_editar")
     
     context['form_editar_cartao']=form_cartao_pessoa
     return render(request,'cartoes_editar.html',context)
+
+
+def registos_view(request):
+    context = {}
+    registos = Registo.objects.all()
+    context['registos'] = registos
+
+    return render(request,'registos.html',context)
+

@@ -19,6 +19,12 @@ class FormAdicionarGestor(forms.ModelForm):
     class Meta:
         model= Gestor
         fields = ("email","first_name","last_name", "password")
+    
+    def clean(self):
+        cleaned_data= super(FormAdicionarGestor,self).clean()
+        email = cleaned_data["email"]
+        if(Gestor.objects.filter(email = email)):
+            raise forms.ValidationError("Já existe um gestor com esse email!")
 
 class EdificioForm(forms.ModelForm):
     nome = forms.CharField(label="Nome", max_length=20)
@@ -27,6 +33,12 @@ class EdificioForm(forms.ModelForm):
     class Meta:
         model = Edificio
         fields=("nome","descricao")
+    
+    def clean(self):
+        cleaned_data = super(EdificioForm,self).clean()
+        nome = cleaned_data["nome"]
+        if(Edificio.objects.filter(nome = nome)):
+            raise forms.ValidationError("Já existe um edifício com esse nome!")
     
 
 
@@ -37,11 +49,11 @@ class LocalForm(forms.ModelForm):
 
     data_inicio = forms.DateInput()
     data_fim = forms.DateInput()
-    ativo = forms.BooleanField()
+    
 
     class Meta:
         model = Local
-        fields = ("nome","descricao","edificio","data_inicio","data_fim","ativo")
+        fields = ("nome","descricao","edificio","data_inicio","data_fim",)
 
     def clean(self):
         cleaned_data = super(LocalForm, self).clean()
@@ -69,6 +81,16 @@ class PessoaForm(forms.ModelForm):
     class Meta:
         model = Pessoa
         fields = ("first_name","last_name","email","phone_number","descricao")
+    
+    def clean(self):
+        cleaned_data = super(PessoaForm, self).clean()
+        first_name = cleaned_data["first_name"]
+        last_name = cleaned_data["last_name"]
+        email = cleaned_data["email"]
+        phone_number = cleaned_data["phone_number"]
+
+        if(Pessoa.objects.filter(first_name=first_name,last_name=last_name,email=email,phone_number=phone_number)):
+            raise forms.ValidationError("Já existe uma pessoa com esses dados!")
 
 class CartaoForm(forms.ModelForm):
     codigo_hexa = forms.CharField(max_length=50)
@@ -76,6 +98,12 @@ class CartaoForm(forms.ModelForm):
     class Meta:
         model = Cartao
         fields = ("codigo_hexa",)
+    
+    def clean(self):
+        cleaned_data = super(CartaoForm, self).clean()
+        codigo_hexa = cleaned_data["codigo_hexa"]
+        if(Cartao.objects.filter(codigo_hexa= codigo_hexa)):
+            raise forms.ValidationError("Já existe um cartão com esse código!")
 
 class Form_Cartao_Pessoa(forms.ModelForm):
     data_inicio = forms.DateInput()
@@ -87,6 +115,22 @@ class Form_Cartao_Pessoa(forms.ModelForm):
         model = Pessoa_Cartao
         fields = ("data_inicio","data_fim","cartao","pessoa")
 
+    def clean(self):
+        cleaned_data = super(Form_Cartao_Pessoa, self).clean()
+        if not cleaned_data['data_fim']:
+            cleaned_data['data_fim'] = None
+
+        cartao = cleaned_data['cartao']
+        pessoa = cleaned_data['pessoa']
+        data_inicio = cleaned_data['data_inicio']
+        data_fim = cleaned_data['data_fim']
+        if(Pessoa_Cartao.objects.filter(data_inicio=data_inicio, cartao=cartao, pessoa = pessoa, data_fim=data_fim).exists()):
+            raise forms.ValidationError("Cartão já associado com esses dados!")
+        if(data_fim != None):
+            if(data_inicio>data_fim):
+                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
+        return cleaned_data
+
 
 class Form_Caixa_Local(forms.ModelForm):
     local = forms.ModelChoiceField(queryset=Local.objects.all(),empty_label="Selecione o Cartão",initial=0)
@@ -97,16 +141,42 @@ class Form_Caixa_Local(forms.ModelForm):
     class Meta:
         model = Caixa_Local
         fields = ("local","caixa","data_inicio","data_fim")
+    
+    def clean(self):
+        cleaned_data = super(Form_Caixa_Local, self).clean()
+        if not cleaned_data['data_fim']:
+            cleaned_data['data_fim'] = None
+
+        local = cleaned_data['local']
+        caixa = cleaned_data['caixa']
+        data_inicio = cleaned_data['data_inicio']
+        data_fim = cleaned_data['data_fim']
+        if(Caixa_Local.objects.filter(data_inicio=data_inicio, local=local, caixa = caixa, data_fim=data_fim).exists()):
+            raise forms.ValidationError("Já existe uma caixa adicionada com esses dados!")
+        if(data_fim != None):
+            if(data_inicio>data_fim):
+                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
+        return cleaned_data
 
 class Form_Caixa(forms.ModelForm):
     
     ip = forms.CharField(max_length=50)
     mac_adress = forms.CharField(max_length=50)
     token_seguranca = forms.CharField(max_length=50)
-    ativo = forms.BooleanField()
+    ativo = forms.BooleanField(required=False, initial=False, label = "Ativo")
     class Meta:
         model = Caixa
         fields = ("ip","mac_adress","token_seguranca","ativo")
+
+    def clean(self):
+        cleaned_data = super(Form_Caixa, self).clean()
+        ip = cleaned_data['ip']
+        token_seguranca = cleaned_data['token_seguranca']
+        if(Caixa.objects.filter(ip = ip)):
+            raise forms.ValidationError("Já existe uma caixa com esse ip!")
+        if(Caixa.objects.filter(token_seguranca=token_seguranca)):
+            raise forms.ValidationError("Já existe uma caixa com esse token!")
+        return cleaned_data
 
 class Form_Edf_Gestor(forms.ModelForm):
     data_inicio = forms.DateInput()
