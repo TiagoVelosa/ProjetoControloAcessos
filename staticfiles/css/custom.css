@@ -6,4 +6,46 @@
     
     }
 .cartao2:hover{
-    background-color: #cccccc;}
+    background-color: #cccccc;
+}
+.box-3{
+    
+    display: flex;
+    flex-direction: row;
+}
+.box-2{
+    width: 40%;
+    margin-left: 5%;
+    
+    
+    display: flex;
+    flex-direction: column;
+}
+.lista{
+    background-color: #e9e9e9;
+    margin-bottom: 1%;
+    margin-top: 1%;
+    border-radius: 10px;
+    
+    width: 50%;
+    
+}
+.descricao{
+    background-color: #e9e9e9;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 10px;
+    height: 50%;
+    
+}
+.gestores{
+    background-color: #e9e9e9;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 10px;
+    height: 50%;
+    
+}
+.linha_lista{
+    font-size: 30px;
+}

@@ -10,6 +10,26 @@ from django.http import FileResponse
 
 
 # Create your views here.
+def edificio_details_view(request,id):
+    context = {}
+    gestores = []
+    try:
+        edf = Edificio.objects.get(id=id)
+    except Edificio.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Edificio não encontrado!"
+    
+    locais_ativos = Local.objects.raw('select * from caixas_local where edificio_id= %s and (data_fim > now() or data_fim is NULL);', [id])
+    gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [id])
+    for gestor in gestores_edf:
+        
+        gestores.append(gestor)
+    
+    
+    context["gestores"] = gestores_edf
+    context["edificio"] = edf
+    context["locais"] = locais_ativos
+    return render(request, 'edificio_details.html',context)
+
 
 def teste_view(request):
     return render(request,'base.html')

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edificios
+{% endblock %}
+
+{% block content %}
+<h1 style="margin-top:2% ;">{{edificio.nome}}</h1>
+
+<div class = "card mb-4"></div>
+
+<div class = "box-3">
+    <div class="lista">
+        <h1 style="margin: 1%;">Locais Ativos: </h1>
+        
+        <ul style="margin: 1%;">
+            {% for local in locais %}
+                <li class= "linha_lista">{{local.nome}}</li>
+            {% endfor%}
+            
+        </ul style="margin: 1%;">
+    </div>
+    <div class = "box-2">
+        <div class="descricao">
+            <h2 style="margin: 1%;">Descrição:</h2>
+            <p style="margin: 1%;">{{edificio.descricao}}</p>
+        </div>
+        <div class="gestores">
+            <h2 style="margin: 1%;">Gestores:</h2>
+            <ul style="margin: 1%;">
+                {% for rel in gestores %}
+
+                    <li style="font-size: larger;">{{rel.gestor.first_name}} {{rel.gestor.last_name}}</li>
+                {% endfor%}
+            </ul>
+            
+        </div>
+
+    </div>
+    
+</div>
+
+
+{% endblock %}
