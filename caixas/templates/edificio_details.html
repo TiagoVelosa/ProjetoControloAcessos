@@ -5,7 +5,7 @@ Edificios
 {% endblock %}
 
 {% block content %}
-<h1 style="margin-top:2% ;">{{edificio.nome}}</h1>
+<h1 style="margin-top:2% ; font-size: 50px;">{{edificio.nome}}</h1>
 
 <div class = "card mb-4"></div>
 
@@ -15,7 +15,7 @@ Edificios
         
         <ul style="margin: 1%;">
             {% for local in locais %}
-                <li class= "linha_lista">{{local.nome}}</li>
+                <li class= "linha_lista"><a class="link_preto" href="{% url 'home' %}">{{local.nome}}</a></li>
             {% endfor%}
             
         </ul style="margin: 1%;">
@@ -23,7 +23,7 @@ Edificios
     <div class = "box-2">
         <div class="descricao">
             <h2 style="margin: 1%;">Descrição:</h2>
-            <p style="margin: 1%;">{{edificio.descricao}}</p>
+            <p class="p_texto">{{edificio.descricao}}</p>
         </div>
         <div class="gestores">
             <h2 style="margin: 1%;">Gestores:</h2>
@@ -39,6 +39,19 @@ Edificios
     </div>
     
 </div>
-
+<div class = "div_botoes">
+    <button class="botao" onclick="location.href='{% url 'locais' %}' ">
+        Adicionar Local
+    </button>
+    <button class="botao" onclick="location.href='{% url 'edf_historico_id' edificio.id %}' ">
+        Histórico de Locais do Edificio
+    </button>
+    {% if True %}
+    <button class="botao" onclick="location.href='{% url 'locais' %}' ">
+        Histórico de Gestores do Edificio
+    </button>
+    {% endif %}
+    
+</div>
 
 {% endblock %}

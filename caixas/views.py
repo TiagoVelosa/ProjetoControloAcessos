@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from caixas.forms import EdificioForm, Form_Caixa_Local,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor, CartaoForm, Form_Cartao_Pessoa,Form_Caixa
 from caixas.models import Edificio, Local, Pessoa, Registo, Rel_Gestor_Edificio, Cartao,Pessoa_Cartao,Caixa, Caixa_Local
 from users.models import Gestor
-import io
+from django.contrib import messages
 from django.http import FileResponse
 
 
@@ -60,22 +60,30 @@ def caixas_inativas(request):
 
     return render(request, "caixas_inativas.html",context)
 
+def historico_edf_id_view(request,id):
+    context={}
+    try:
+        edf = Edificio.objects.get(id=id)
+    except Edificio.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Edf não encontrado!"
+
+    
+    locais = Local.objects.raw("SELECT * FROM caixas_local where edificio_id = %s",[edf.id])
+    context["edificio"] = edf
+    context["locais"] = locais
+    return render(request,"edf_historico.html",context)
+
+
 def historico_edf_view(request):
     context = {}
     current_user = request.user
     tem_edificio = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
     total = len(tem_edificio)
-    context["edificios"] = tem_edificio
-    context["total"] = total
+    
     if(total ==1):
-        edificio = Edificio.objects.get(id = tem_edificio[0].edificio_id)
-        local = Local.objects.filter(edificio_id = edificio.id)
-        context["locais_edf"] = local
-        context["edificio"] = edificio.nome
-    elif('edificio_id' in request.POST and request.POST['edificio_id'] != 'Selecione o Edificio'):
-        locais = Local.objects.filter(edificio_id = request.POST['edificio_id'])
-        context["locais_edf"] = locais
-        context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
+        return redirect('edf_historico',id=tem_edificio[0].edificio_id)
+    else:
+        context["edificios"] = tem_edificio
     return render(request,'historico_edf.html',context)
 
 def edificio_view(request):
@@ -113,9 +121,8 @@ def local_editar_view(request,id):
         context['locais_form'] = form
         if form.is_valid():           
             form.save()
-            context['sucesso'] = "Local editado com sucesso!"
-            form_local = LocalForm()
-            return HttpResponseRedirect("locais_editar")
+            messages.success(request, "Local editado com sucesso! ") 
+            return HttpResponseRedirect('/locais/adicionar') 
     
     
     context['locais_form']=form_local
@@ -272,34 +279,22 @@ def adicionar_caixa_view(request):
     context['form_caixa_local'] = form_caixa_local
     return render(request, "adicionar_caixa.html",context)
 
+
+def sucesso_view(request):
+    
+    return render(request,"sucesso.html")
+
 def locais_view(request):    
     context = {}
     if request.POST:        
         form = LocalForm(request.POST)
         context['locais_form'] = form
         if form.is_valid():
-            print(request.POST)
-            local = Local()            
-            local.nome = request.POST['nome']
-            local.descricao = request.POST['descricao']
-            local.data_fim = request.POST['data_fim']
-            local.data_inicio = request.POST['data_inicio']
-            local.edificio = Edificio.objects.get(pk=request.POST['edificio'])
-            if (request.POST['ativo'] =="on"):
-                local.ativo = True
-            else:
-                local.ativo = False
-
-            local.save()
-            form = LocalForm()
-            context['mensagem'] = "Local adicionado com sucesso! "
-            return HttpResponseRedirect("locais")
-
-                      
-        
+            form.save()
+            messages.success(request, "Local adicionado com sucesso! ") 
+            return HttpResponseRedirect('/locais/adicionar') 
     else:        
         form = LocalForm()
-        
     context['locais_form'] = form
     return render(request, "locais.html",context)
 

@@ -6,6 +6,7 @@ Locais
 
 {% block content %}
 <h2 style="margin-top: 2%;">Adicionar Local</h2>
+<div class = "card mb-4"></div>
 <form method ="post">
     {% csrf_token %}
     {% if dados_invalidos %}
@@ -17,8 +18,10 @@ Locais
                 <p style="color: red;"> {{error}} </p>
             {% endfor %}
     {% for field in locais_form %}
+    <p style="margin-bottom: 0;">
+        {{field.label_tag}}
+    </p>
         <p>
-            {{field.label_tag}}
             {{field}}
 
             {% if field.help_text %}
@@ -36,8 +39,14 @@ Locais
                 </div>
             {% endif %}
     
-    <button type = "submit">Adicionar</button>
+    <button type = "submit">Adicionar Local</button>
 
 </form>
-<h4 style="margin-top: 4%;">{{mensagem}} </h4>
+{% if messages %}
+<div class="alert alert-success alert-dismissible">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

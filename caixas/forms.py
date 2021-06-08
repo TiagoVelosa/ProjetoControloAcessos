@@ -5,7 +5,7 @@ from django.forms import fields, widgets
 from django.shortcuts import redirect
 from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
-
+from caixas.widgets import PickerInput
 
 
 class FormAdicionarGestor(forms.ModelForm):
@@ -40,15 +40,16 @@ class EdificioForm(forms.ModelForm):
         if(Edificio.objects.filter(nome = nome)):
             raise forms.ValidationError("Já existe um edifício com esse nome!")
     
-
+class DateInput(forms.DateInput):
+    input_type='date'
 
 class LocalForm(forms.ModelForm):
-    nome = forms.CharField(max_length=20, label = "Nome")
-    descricao = forms.CharField(label="Descricão", max_length=50)
-    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",initial=0)
+    nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Edificio', 'style': 'width: 50%; height: 30px;'}))
+    descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Edificio', 'style': 'width: 50%; height: 30px;'}))
+    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width:50%; height:10%;'}))
 
-    data_inicio = forms.DateInput()
-    data_fim = forms.DateInput()
+    data_inicio = forms.DateTimeField(widget=DateInput())
+    data_fim = forms.DateTimeField(widget=DateInput())
     
 
     class Meta:

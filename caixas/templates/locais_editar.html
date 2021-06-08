@@ -5,17 +5,23 @@ Locais
 {% endblock %}
 
 {% block content %}
-<h2>Editar Local</h2>
-<form method ="post" style="margin-bottom: 2%;">
+<h2 style="margin-top: 2%;">Editar Local</h2>
+<div class = "card mb-4"></div>
+<form method ="post">
     {% csrf_token %}
     {% if dados_invalidos %}
         <div style = "color: red;">
             <p>{{dados_invalidos}}</p>
         </div>
     {% endif %}
+    {% for error in locais_form.non_field_errors %}
+                <p style="color: red;"> {{error}} </p>
+            {% endfor %}
     {% for field in locais_form %}
+    <p style="margin-bottom: 0;">
+        {{field.label_tag}}
+    </p>
         <p>
-            {{field.label_tag}}
             {{field}}
 
             {% if field.help_text %}
@@ -33,9 +39,14 @@ Locais
                 </div>
             {% endif %}
     
-    <button type = "submit">Sumbmit</button>
+    <button type = "submit">Editar Local</button>
 
 </form>
-<div class = "card mb-4"></div>
-<h3>{{sucesso}}</h3>
+{% if messages %}
+<div class="alert alert-success alert-dismissible">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
