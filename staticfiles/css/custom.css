@@ -21,6 +21,14 @@
     display: flex;
     flex-direction: column;
 }
+.box-2-local{
+    width: 40%;
+    margin: 2%;
+    
+    
+    display: flex;
+    flex-direction: column;
+}
 .lista{
     background-color: #e9e9e9;
     margin-bottom: 1%;
@@ -47,7 +55,7 @@
     
 }
 .linha_lista{
-    font-size: 30px;
+    font-size: 24px;
 }
 .link_preto{
     color: black;
@@ -66,10 +74,30 @@
     display: flex;
     flex-direction: row;
 }
+.div_locais{
+    margin: 1%;    
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+}
 .botao{
-    font-size: x-large;
+    font-size: large;
     background-color: #e9e9e9;
 }
 .botao:hover{
     background-color: #a3a3a3;
+}
+
+.details{
+    text-align: center;
+    width: 20%;
+    background-color: #e9e9e9;
+    border-radius: 10px;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }

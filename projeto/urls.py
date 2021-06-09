@@ -44,5 +44,6 @@ urlpatterns = [
     path('edificios/historico/<int:id>', historico_edf_id_view, name = "edf_historico_id" ),
     path('edificio/<int:id>', edificio_details_view, name = "edf_details"),
     path('caixas/inativas',caixas_inativas, name = "caixas_inativas"),
+    path('locais/<int:id>',local_details_view, name="local_details"),
     path('sucesso',sucesso_view, name="sucesso"),
 ]

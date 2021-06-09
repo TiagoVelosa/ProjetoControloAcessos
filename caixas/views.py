@@ -30,6 +30,16 @@ def edificio_details_view(request,id):
     context["locais"] = locais_ativos
     return render(request, 'edificio_details.html',context)
 
+def local_details_view(request,id):
+    context = {}
+    try:
+        local = Local.objects.get(id=id)
+    except Local.DoesNotExist:
+        context['erro_nao_existe'] = "ERRO - Local não encontrado!"
+    caixas_local = Caixa_Local.objects.raw("SELECT * FROM caixas_caixa_local where local_id = %s and (data_fim > now() or data_fim is NULL);",[local.id])
+    context["local"] =local
+    context["caixas"] = caixas_local
+    return render(request,"local_details.html",context)
 
 def teste_view(request):
     return render(request,'base.html')

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+Locais
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h2 style="margin-top: 2%;">{{local.nome}}</h2> 
+    <button class="botao"  style="height: min-content; " onclick="location.href='{% url 'locais_editar' local.id %}' ">
+        Editar Local
+    </button>
+</div>
+
+<div class = "card mb-4"></div>
+
+<div class = "div_locais">    
+        <div class="details" >
+            <h4 style="margin: 1%;">Edificio:</h4>
+            <p class="p_texto">{{local.edificio.nome}}</p>
+        </div>
+        <div class="details" >
+            <h4 style="margin: 1%;">Descrição:</h4>
+            <p class="p_texto">{{local.descricao}}</p>
+        </div>
+        <div class="details" >
+            <h4 style="margin: 1%;">Data inicio:</h4>
+            <p class = "p_texto">{{local.data_inicio}}</p>            
+        </div>   
+        <div class="details" >            
+            <h4 style="margin: 1%;">Data Fim:</h4>
+            <p class = "p_texto">{{local.data_fim}}</p>    
+        </div>
+
+    
+    
+</div>
+{% if caixas %}
+    <h2 style="margin-top: 2%;" >Caixas ativas no local:</h2>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Caixa</th>
+                <th>IP</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                <th>Editar</th>
+                <th>Remover</th>
+                
+                
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Caixa</th>
+                <th>IP</th>                  
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                <th>Editar</th>
+                <th>Remover</th>
+                
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for relacao_caixa in caixas %}
+                <tr>
+                    <td>{{relacao_caixa.caixa_id}}</td>
+                    <td>{{relacao_caixa.caixa.ip}}</td>
+                    <td>{{relacao_caixa.data_inicio}}</td>
+                    <td>{{relacao_caixa.data_fim}}</td>
+                    <td><a href ="{% url 'caixas_editar' relacao_caixa.caixa_id %}"> [Editar]</a></td>
+                    <td><a href= "">[Remover]</a></td>
+                    
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

@@ -5,17 +5,16 @@ Edificios
 {% endblock %}
 
 {% block content %}
-<h1 style="margin-top:2% ; font-size: 50px;">{{edificio.nome}}</h1>
-
+<h2 style="margin-top: 2%;">{{edificio.nome}}</h2>
 <div class = "card mb-4"></div>
 
 <div class = "box-3">
     <div class="lista">
-        <h1 style="margin: 1%;">Locais Ativos: </h1>
+        <h2 style="margin: 1%;">Locais Ativos: </h2>
         
         <ul style="margin: 1%;">
             {% for local in locais %}
-                <li class= "linha_lista"><a class="link_preto" href="{% url 'home' %}">{{local.nome}}</a></li>
+                <li class= "linha_lista"><a class="link_preto" href="{% url 'local_details' local.id %}">{{local.nome}}</a></li>
             {% endfor%}
             
         </ul style="margin: 1%;">
@@ -46,7 +45,7 @@ Edificios
     <button class="botao" onclick="location.href='{% url 'edf_historico_id' edificio.id %}' ">
         Histórico de Locais do Edificio
     </button>
-    {% if True %}
+    {% if request.user.is_supergestor %}
     <button class="botao" onclick="location.href='{% url 'locais' %}' ">
         Histórico de Gestores do Edificio
     </button>
