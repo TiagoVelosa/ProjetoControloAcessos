@@ -6,9 +6,9 @@ from django.shortcuts import redirect
 from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
 from caixas.widgets import PickerInput
+import datetime
 
-
-class FormAdicionarGestor(forms.ModelForm):
+class FormAdicionarGestor(forms.ModelForm): #completo
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
@@ -26,7 +26,7 @@ class FormAdicionarGestor(forms.ModelForm):
         if(Gestor.objects.filter(email = email)):
             raise forms.ValidationError("Já existe um gestor com esse email!")
 
-class EdificioForm(forms.ModelForm):
+class EdificioForm(forms.ModelForm): #completo
     nome = forms.CharField(label="Nome", max_length=20)
     descricao = forms.CharField(label="Descricão", max_length=50)
 
@@ -40,10 +40,26 @@ class EdificioForm(forms.ModelForm):
         if(Edificio.objects.filter(nome = nome)):
             raise forms.ValidationError("Já existe um edifício com esse nome!")
     
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            edf = self.instance
+            edf.modificado_por= user
+            edf.data_modificado=datetime.date.today()
+                
+        else:
+            edf = Edificio(nome=data["nome"],descricao = data['descricao'])
+            edf.criado_por= user
+            edf.data_modificado=None
+        edf.save()
+
+
+
+
 class DateInput(forms.DateInput):
     input_type='date'
 
-class LocalForm(forms.ModelForm):
+class LocalForm(forms.ModelForm): #completo
     nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Edificio', 'style': 'width: 50%; height: 30px;'}))
     descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Edificio', 'style': 'width: 50%; height: 30px;'}))
     edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width:50%; height:10%;'}))
@@ -72,7 +88,20 @@ class LocalForm(forms.ModelForm):
                 raise forms.ValidationError("A data final não pode ser anterior à inicial")    
         return cleaned_data
 
-class PessoaForm(forms.ModelForm):
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            local = self.instance
+            local.modificado_por= user
+            local.data_modificado=datetime.date.today()
+            
+        else:
+            local = Local(nome=data["nome"],descricao = data['descricao'],data_inicio = data['data_inicio'],data_fim = data['data_fim'],edificio = data["edificio"])
+            local.criado_por= user
+            local.data_modificado=None
+        local.save()
+
+class PessoaForm(forms.ModelForm): #completo
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
@@ -92,8 +121,22 @@ class PessoaForm(forms.ModelForm):
 
         if(Pessoa.objects.filter(first_name=first_name,last_name=last_name,email=email,phone_number=phone_number)):
             raise forms.ValidationError("Já existe uma pessoa com esses dados!")
+    
+    
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            pessoa = self.instance
+            pessoa.modificado_por= user
+            pessoa.data_modificado=datetime.date.today()
+                
+        else:
+            pessoa = Pessoa(first_name=data["first_name"],last_name = data['last_name'],email = data['email'],phone_number = data['phone_number'])
+            pessoa.criado_por= user
+            pessoa.data_modificado=None
+        pessoa.save()
 
-class CartaoForm(forms.ModelForm):
+class CartaoForm(forms.ModelForm): #completo
     codigo_hexa = forms.CharField(max_length=50)
 
     class Meta:
@@ -105,10 +148,25 @@ class CartaoForm(forms.ModelForm):
         codigo_hexa = cleaned_data["codigo_hexa"]
         if(Cartao.objects.filter(codigo_hexa= codigo_hexa)):
             raise forms.ValidationError("Já existe um cartão com esse código!")
+    
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            cartao = self.instance
+            cartao.modificado_por= user
+            cartao.data_modificado=datetime.date.today()
+                
+        else:
+            cartao = Cartao(codigo_hexa=data["codigo_hexa"])
+            cartao.criado_por= user
+            cartao.data_modificado=None
+        cartao.save()
 
-class Form_Cartao_Pessoa(forms.ModelForm):
-    data_inicio = forms.DateInput()
-    data_fim = forms.DateInput()
+
+
+class Form_Cartao_Pessoa(forms.ModelForm): #completo
+    data_inicio = forms.DateTimeField(widget=DateInput())
+    data_fim = forms.DateTimeField(widget=DateInput())
     cartao = forms.ModelChoiceField(queryset=Cartao.objects.all(),empty_label="Selecione o Cartão",initial=0)
     pessoa = forms.ModelChoiceField(queryset=Pessoa.objects.all(),empty_label="Selecione a Pessoa",initial=0)
     
@@ -131,13 +189,26 @@ class Form_Cartao_Pessoa(forms.ModelForm):
             if(data_inicio>data_fim):
                 raise forms.ValidationError("A data final não pode ser anterior à inicial")    
         return cleaned_data
+    
+    def save(self,user,tipo):
+            data = self.cleaned_data        
+            if tipo=="editar":
+                pessoa_cartao = self.instance
+                pessoa_cartao.modificado_por= user
+                pessoa_cartao.data_modificado=datetime.date.today()
+                
+            else:
+                pessoa_cartao = Pessoa_Cartao(cartao=data["cartao"],pessoa = data['pessoa'],data_inicio = data['data_inicio'],data_fim = data['data_fim'])
+                pessoa_cartao.criado_por= user
+                pessoa_cartao.data_modificado=None
+            pessoa_cartao.save()
 
 
-class Form_Caixa_Local(forms.ModelForm):
+class Form_Caixa_Local(forms.ModelForm): #completo
     local = forms.ModelChoiceField(queryset=Local.objects.all(),empty_label="Selecione o Cartão",initial=0)
     caixa = forms.ModelChoiceField(queryset=Caixa.objects.all(),empty_label="Selecione o Cartão",initial=0)
-    data_inicio = forms.DateInput()
-    data_fim = forms.DateInput()
+    data_inicio = forms.DateTimeField(widget=DateInput())
+    data_fim = forms.DateTimeField(widget=DateInput())
 
     class Meta:
         model = Caixa_Local
@@ -158,8 +229,22 @@ class Form_Caixa_Local(forms.ModelForm):
             if(data_inicio>data_fim):
                 raise forms.ValidationError("A data final não pode ser anterior à inicial")    
         return cleaned_data
+    
+    def save(self,user,tipo):
+            data = self.cleaned_data        
+            if tipo=="editar":
+                caixa_local = self.instance
+                caixa_local.modificado_por= user
+                caixa_local.data_modificado=datetime.date.today()
+                
+            else:
+                caixa_local = Caixa_Local(local=data["local"],caixa = data['caixa'],data_inicio = data['data_inicio'],data_fim = data['data_fim'])
+                caixa_local.criado_por= user
+                caixa_local.data_modificado=None
+            caixa_local.save()
 
-class Form_Caixa(forms.ModelForm):
+
+class Form_Caixa(forms.ModelForm): #completo
     
     ip = forms.CharField(max_length=50)
     mac_adress = forms.CharField(max_length=50)
@@ -179,9 +264,24 @@ class Form_Caixa(forms.ModelForm):
             raise forms.ValidationError("Já existe uma caixa com esse token!")
         return cleaned_data
 
-class Form_Edf_Gestor(forms.ModelForm):
-    data_inicio = forms.DateInput()
-    data_fim = forms.DateInput()
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            caixa = self.instance
+            caixa.modificado_por= user
+            caixa.data_modificado=datetime.date.today()
+            
+        else:
+            caixa = Caixa(ip=data["ip"],mac_adress = data['mac_adress'],token_seguranca = data['token_seguranca'],ativo = data['ativo'])
+            caixa.criado_por= user
+            caixa.data_modificado=None
+        caixa.save()
+
+    
+
+class Form_Edf_Gestor(forms.ModelForm): #completo
+    data_inicio = forms.DateTimeField(widget=DateInput())
+    data_fim = forms.DateTimeField(widget=DateInput())
     gestor = forms.ModelChoiceField(queryset=Gestor.objects.all(),empty_label="Selecione o Gestor",initial=0)
     edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",initial=0)
 
@@ -204,3 +304,18 @@ class Form_Edf_Gestor(forms.ModelForm):
             if(data_inicio>data_fim):
                 raise forms.ValidationError("A data final não pode ser anterior à inicial")    
         return cleaned_data
+    
+    def save(self,user,tipo):
+        data = self.cleaned_data        
+        if tipo=="editar":
+            rel = self.instance
+            rel.modificado_por= user
+            rel.data_modificado=datetime.date.today()
+            
+        else:
+            rel = Rel_Gestor_Edificio(data_inicio=data["data_inicio"],data_fim=data["data_fim"],gestor=data["gestor"],edificio=data["edificio"])
+            rel.criado_por= user
+            rel.data_modificado=None
+        rel.save()
+
+

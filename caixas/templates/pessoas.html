@@ -31,45 +31,12 @@ Pessoas
     </form>
 </div>
 
-
-<div style="flex-direction: row; display: flex; ">
-    <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Pessoa</h3>
-    <button onclick="Hide('Editar_Pessoa')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
+{% if messages %}
+<div class="alert alert-success alert-dismissible">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
 </div>
-<div class = "card mb-4"></div>
-<div id = "Editar_Pessoa">    
-    <form method ="post"> 
-        {% csrf_token %}
-        {% for error in form_editar_pessoa.non_field_errors %}
-            <p style="color: red;"> {{error}} </p>
-        {% endfor %}
-        {% for field in form_editar_pessoa %}
-            <p>
-                {{field.label_tag}}
-                {{field}}
-
-                {% if field.help_text %}
-                    <small style= "color: grey;">{{field.help_text}}</small>
-                {% endif %}
-                {% for error in field.erros %}
-                    <p style="color: red;">{{error}}</p>
-                {% endfor %}                        
-            </p>
-        {% endfor %}
-        <button type = "submit" style="margin-bottom: 2%;">Editar Pessoa</button>
-    </form>
-</div>
-
-
-<script>
-    function Hide(componente) {
-      var x = document.getElementById(componente);
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
-</script>
+{% endif %}
 {% endblock %}
 
