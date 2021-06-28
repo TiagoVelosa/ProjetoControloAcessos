@@ -6,5 +6,29 @@ Sucesso
 {% endblock %}
 
 {% block content %}
-<h4 style="margin: 1%;">Adicionado com sucesso!</h4>
+
+
+
+{% if mac %}
+<p>mac: {{mac}}</p>
+{% endif %}
+
+{% if ip %}
+<p>ip: {{ip}}</p>
+{% endif %}
+
+{% if datetime %}
+<p>datetime: {{datetime}}</p>
+{% endif %}
+
+{% if rfid %}
+<p>rfid: {{rfid}}</p>
+{% endif %}
+
+{% if h %}
+<p>h: {{h}}</p>
+{% endif %}
+
+
+
 {% endblock %}

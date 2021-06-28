@@ -9,7 +9,12 @@ Edificios
 
 
 {% block content %}
-<h1 style="margin-top:2% ;">Edificios geral</h1>
+{% if request.user.is_supergestor %}
+    <h1 style="margin-top:2% ;">Lista de edificios com gestores ativos</h1>
+{% else %}
+    <h1 style="margin-top:2% ;">Edificios geral</h1>
+{% endif %}
+
 <div class = "card mb-4"></div>
 
 {% if edificios %}
@@ -30,5 +35,7 @@ Edificios
         </div>        
     {% endfor %}
 {% endif %}
+
+
 
 {% endblock %}

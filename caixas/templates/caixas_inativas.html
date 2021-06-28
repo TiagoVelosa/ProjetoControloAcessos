@@ -39,7 +39,7 @@ Caixas
                     {% else %}
                         <td>{{caixa.data_criacao}}</td>
                     {%endif%}
-                    <td><a href ="{% url 'adicionar_caixa'%}"> Ativar Caixa</a></td>
+                    <td><a onclick="return confirm('Tem a certeza que pretente ativar a caixa?');" href ="{% url 'ativar_caixa' caixa.id %}"> Ativar Caixa</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -51,4 +51,13 @@ Caixas
     <h2 class = "mt-4"> Não existem caixas inativas!</h2>
 
 {% endif %}
+{% if messages %}
+<div class="alert alert-success alert-dismissible">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
+
+

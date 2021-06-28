@@ -8,10 +8,9 @@ Cartões
 
 
 
-<div style="flex-direction: row; display: flex; ">
+<div style="flex-direction: row; display: flex; "></div>
     <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Cartão</h3>
-    <button onclick="Hide('Editar_Cartao')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-</div>
+    
 <div class = "card mb-4"></div>
 <div id = "Editar_Cartao">    
     <form method ="post"> 
@@ -37,15 +36,6 @@ Cartões
 </div>
 
 
-<script>
-    function Hide(componente) {
-      var x = document.getElementById(componente);
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
-</script>
+
 
 {% endblock %}

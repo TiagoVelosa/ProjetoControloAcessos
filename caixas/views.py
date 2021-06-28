@@ -1,15 +1,89 @@
  
 
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from caixas.forms import EdificioForm, Form_Caixa_Local,LocalForm,PessoaForm, FormAdicionarGestor, Form_Edf_Gestor, CartaoForm, Form_Cartao_Pessoa,Form_Caixa
 from caixas.models import Edificio, Local, Pessoa, Registo, Rel_Gestor_Edificio, Cartao,Pessoa_Cartao,Caixa, Caixa_Local
 from users.models import Gestor
 from django.contrib import messages
-from django.http import FileResponse
+import datetime
+
+from .utils import render_to_pdf 
 
 
-# Create your views here.
+def generate_pdf(request, *args, **kwargs):
+    registos = Registo.objects.all()
+    context = {
+        'today': datetime.date.today(), 
+        'amount': 39.99,
+        'customer_name': 'Cooper Mann',
+        'order_id': 1233434,
+        'registos': registos,
+    }
+    pdf = render_to_pdf('pdf/relatorio.html', context)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+def associar_pessoa_cartao_view(request): 
+    context = {}
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
+    if request.POST:
+        form = Form_Cartao_Pessoa(request.POST)
+        if form.is_valid():
+            form.save(gestor_name,"criar")
+            messages.success(request, "Cartão associado com sucesso! ") 
+            return HttpResponseRedirect('/gestores/associar') 
+
+    else:
+        form = Form_Cartao_Pessoa()
+    
+    context["form_rel"] = form
+
+    return render(request,"associar_gestor_edf.html",context)
+    
+
+def lista_pessoas_view(request):
+    context = {}
+    pessoas = Pessoa.objects.all()
+    relacoes = Pessoa_Cartao.objects.raw("SELECT * FROM caixas_pessoa_cartao where data_fim > now() or data_fim is NULL;")
+    context["lista_pessoas"] = pessoas
+    context["relacoes"] = relacoes
+    return render(request,"pessoas_lista.html",context)
+
+def lista_cartoes_view(request):
+    context = {}
+    cartoes = Cartao.objects.all()
+    context["lista_cartao"] = cartoes
+    relacoes = Pessoa_Cartao.objects.raw("SELECT * FROM caixas_pessoa_cartao where data_fim > now() or data_fim is NULL;")
+    context["relacoes"] = relacoes
+    return render(request,"cartoes_lista.html",context)
+
+def ativar_caixa(request,caixa_id):
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
+    try:
+        caixa = Caixa.objects.get(id=caixa_id)
+    except Caixa.DoesNotExist:
+        messages.ERROR("Caixa não existe!")    
+    caixa.ativo = True
+    if (caixa.ativo):
+        messages.success(request,"Caixa ativada com sucesso!")
+        caixa.modificado_por= gestor_name
+        caixa.data_modificado = datetime.date.today()
+        caixa.save()
+        return HttpResponseRedirect('/caixas/inativas')
+
+def sucesso_view(request):
+    context = {}
+    if(request.GET):
+        context["mac"] = request.GET["mac"]
+        context["ip"] = request.GET["ip"]
+        context["datetime"] = request.GET["datetime"]
+        context["rfid"] = request.GET["rfid"]
+        context["h"] = request.GET["h"]        
+
+    return render(request,"sucesso.html",context)
+
 def edificio_details_view(request,id):
     context = {}
     gestores = []
@@ -22,7 +96,7 @@ def edificio_details_view(request,id):
     gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [id])
     for gestor in gestores_edf:
         
-        gestores.append(gestor)
+        gestores.append(gestor) 
     
     
     context["gestores"] = gestores_edf
@@ -41,13 +115,12 @@ def local_details_view(request,id):
     context["caixas"] = caixas_local
     return render(request,"local_details.html",context)
 
-def teste_view(request):
-    return render(request,'base.html')
+
 
 def edf_geral_view(request):
     context = {}
     gestores = {}
-    current_user = request.user
+    current_user = request.user    
     relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
     for rel in relacoes:
         gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [rel.edificio_id])
@@ -97,7 +170,7 @@ def historico_edf_view(request):
     return render(request,'historico_edf.html',context)
 
 def edificio_view(request):
-    #print(request.POST)
+    
     context = {}    
     current_user = request.user
     tem_edificio = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
@@ -115,8 +188,7 @@ def edificio_view(request):
         context["edificio"] = Edificio.objects.get(id = request.POST['edificio_id']).nome
     return render(request,'edificios.html',context)
 
-def input_view(request):
-    return render(request, 'inputs.html')
+
 
 def local_editar_view(request,id):
     context = {}
@@ -161,52 +233,13 @@ def caixas_editar_view(request,id):
     context['caixas_form']=form_caixa
     return render(request,'caixas_editar.html',context)
 
-def gestores_editar(request):
-    print(request.POST)
-    context = {}
-    todos_edificios = Edificio.objects.all()
-    todos_gestores = Gestor.objects.all()
-    todas_relacoes = Rel_Gestor_Edificio.objects.all()
-    context = {
-        'todos_edificios': todos_edificios,
-        'todos_gestores': todos_gestores,
-        'todas_relacoes': todas_relacoes
-    }
-    id_modelo=0
-    if request.POST:
-        if('selecionar_gestor_editar' in request.POST):
-            gestor = Gestor.objects.get(id=request.POST['selecionar_gestor_editar'])
-            form_gestor = FormAdicionarGestor(instance=gestor)          
-            context['form_gestor'] = form_gestor
-            
-        elif('selecionar_edf_editar' in request.POST):
-            edificio = Edificio.objects.get(id=request.POST['selecionar_edf_editar'])
-            form_edificio = EdificioForm(instance=edificio) 
-            context['edificio_form'] = form_edificio
-            id_modelo = request.POST['selecionar_edf_editar'] 
-        elif('selecionar_relacao_editar' in request.POST):
-            relacao = Rel_Gestor_Edificio.objects.get(id=request.POST['selecionar_relacao_editar'])
-            form_edf_gestor = Form_Edf_Gestor(instance=relacao)
-            context['form_rel'] = form_edf_gestor
-            id_modelo = request.POST['selecionar_relacao_editar']
-        form_gestor = FormAdicionarGestor(request.POST) 
-        form_edificio = EdificioForm(request.POST)
-        form_edf_gestor= Form_Edf_Gestor(request.POST)
-        if form_edificio.is_valid():
-            print("Dentro form")
-            print(id_modelo)
-            edificio = Edificio.objects.get(id_modelo)
-            edificio.nome = request.POST['nome']
-            edificio.descricao = request.POST['descricao']
-            edificio.save()
-            return HttpResponseRedirect('gestores') 
+def gestores_lista(request):    
+    context = {}   
+    gestores = Gestor.objects.all()
+    context["gestores"] = gestores
+    return render(request,'gestores_lista.html',context )
 
-
-
-        
-    return render(request,'gestores_editar.html',context )
-
-def adicionar_edf(request): #completo
+def adicionar_edf(request): 
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)    
@@ -217,12 +250,31 @@ def adicionar_edf(request): #completo
         if form_edf.is_valid():            
             form_edf.save(gestor_name,"criar")
             messages.success(request, "Edificio criado com sucesso! ") 
-            return HttpResponseRedirect('/gestores/edificio/adicionar') 
+            return HttpResponseRedirect('/edificio/adicionar') 
     return render(request,"adicionar_edf.html",context)
 
+def gestores_editar_view(request,id):
+    context = {}
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
+    try:
+        gestor = Gestor.objects.get(id=id)
+    except Gestor.DoesNotExist:
+        messages.ERROR(request,"Erro gestor não existe")
+    form_gestor = FormAdicionarGestor(instance=gestor)
+    
+    if request.POST:        
+        form_gestor = FormAdicionarGestor(request.POST,instance=gestor)
+        if form_gestor.is_valid():           
+            form_gestor.save()
+            messages.success(request, "Gestor editado com sucesso! ") 
+            return HttpResponseRedirect('/locais/adicionar') 
+    
+    
+    context['form_gestor']=form_gestor    
+    return render(request,"gestores_editar.html",context)
 
-
-def gestores_adicionar_view(request): #completo
+def gestores_adicionar_view(request): 
     context = {}       
     form_gestor = FormAdicionarGestor()    
     if request.POST:        
@@ -245,7 +297,7 @@ def gestores_adicionar_view(request): #completo
     return render(request, "gestores_adicionar.html",context)
 
 
-def adicionar_caixa_view(request): #completo
+def adicionar_caixa_view(request): 
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name) 
@@ -261,7 +313,7 @@ def adicionar_caixa_view(request): #completo
 
 
 
-def locais_view(request):     #completo
+def locais_view(request):     
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)
@@ -283,7 +335,7 @@ def gestores_associar_edf_view(request):
     if request.POST:
         form = Form_Edf_Gestor(request.POST)
         if form.is_valid():
-            form.save(gestor_name)
+            form.save(gestor_name,"criar")
             messages.success(request, "Gestor associado com sucesso! ") 
             return HttpResponseRedirect('/gestores/associar') 
 
@@ -301,7 +353,7 @@ def caixas_associar_local(request):
     if request.POST:
         form = Form_Caixa_Local(request.POST)
         if form.is_valid():
-            form.save(gestor_name)
+            form.save(gestor_name,"criar")
             messages.success(request, "Caixa associada com sucesso! ") 
             return HttpResponseRedirect('/caixas/associar') 
 
@@ -312,7 +364,7 @@ def caixas_associar_local(request):
 
     return render(request,"caixas_associar.html",context)
 
-def adicionar_cartao(request): #completo
+def adicionar_cartao(request): 
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)
@@ -391,7 +443,7 @@ def caixas_view_ids(request, id_local):
 
     return render(request,'caixas.html',context)
 
-def pessoas_view(request): #completo
+def pessoas_view(request): 
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)      
     context = {}
@@ -408,80 +460,80 @@ def pessoas_view(request): #completo
     context['form_pessoa'] = form
     return render(request, "pessoas.html",context)
 
-def pessoas_editar_view(request):    
+def pessoas_editar_view(request,id):    
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
     context = {}
     try:
         pessoa = Pessoa.objects.get(id=id)
     except Pessoa.DoesNotExist:
-        context['erro_nao_existe'] = "ERRO - Pessoa não encontrada!"
+        messages.ERROR(request,"Pessoa não existe!")
     form_pessoa = PessoaForm(instance=pessoa)
     
     if request.POST:        
-        form = PessoaForm(request.POST,instance=pessoa)
-        context['form_editar_pessoa'] = form
-        if form.is_valid():
-           
-            form.save()
-            context['sucesso'] = "Pessoa editada com sucesso!"
-            form_pessoa = PessoaForm()
-            return HttpResponseRedirect("pessoas_editar")
+        form_pessoa = PessoaForm(request.POST,instance=pessoa)
+        if form_pessoa.is_valid():           
+            form_pessoa.save(gestor_name,"editar")
+            messages.success(request, "Pessoa editada com sucesso! ")  
+            return HttpResponseRedirect("/pessoas/adicionar")
     
     context['form_editar_pessoa']=form_pessoa
+    
     return render(request,'pessoas_editar.html',context)
 
-def cartoes_view(request):
-    print(request.POST)   
-    context = {}
-    todos_cartoes = Cartao.objects.all()
-    todos_pessoas = Pessoa.objects.all()
-    todas_relacoes = Pessoa_Cartao.objects.all()
-    context = {
-        'todos_cartoes': todos_cartoes,
-        'todos_pessoas': todos_pessoas,
-        'todas_relacoes': todas_relacoes
-    }
-    if request.POST:
-        form_cartao = CartaoForm(request.POST) 
-        form_cartao_pessoa = Form_Cartao_Pessoa(request.POST)
-        if form_cartao.is_valid():
-            form_cartao.save()
-            return redirect('cartoes')
-        if form_cartao_pessoa.is_valid():
-            form_cartao_pessoa.save()
-            return redirect('cartoes')
-    else:        
-        form_cartao_pessoa = Form_Cartao_Pessoa()
-        form_cartao = CartaoForm()
-    context['cartao_form'] = form_cartao
-    context['form_rel_pessoa_cartao'] = form_cartao_pessoa
-    return render(request,"cartoes.html" ,context)
+def lista_edfs(request):
+    context ={}
+    edificios = Edificio.objects.all()
+    context["edificios"] = edificios
+    return render(request,"lista_edfs.html",context)
 
 def cartoes_editar_view(request,id):
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
     context = {}
     try:
         cartao = Cartao.objects.get(id=id)
     except Cartao.DoesNotExist:
-        context['erro_nao_existe'] = "ERRO - Cartão não encontrado!"
-    form_cartao_pessoa = Form_Cartao_Pessoa(instance=cartao)
+        messages.ERROR(request,"Cartão não existe!")
+    form = CartaoForm(instance=cartao)
     
     if request.POST:        
-        form = Form_Cartao_Pessoa(request.POST,instance=cartao)
+        form = CartaoForm(request.POST,instance=cartao)
         context['form_editar_cartao'] = form
-        if form.is_valid():
-           
-            form.save()
-            context['sucesso'] = "Cartão editado com sucesso!"
-            form_cartao_pessoa = Form_Cartao_Pessoa()
-            return HttpResponseRedirect("cartao_editar")
+        if form.is_valid():           
+            form.save(gestor_name,"editar")
+            messages.success(request, "Cartão editado com sucesso! ") 
+            return HttpResponseRedirect("/cartoes/adicionar")
     
-    context['form_editar_cartao']=form_cartao_pessoa
+    context['form_editar_cartao']=form
     return render(request,'cartoes_editar.html',context)
 
 
-def registos_view(request):
+def registos_view(request): #isto tá por fazer ñ sei como xd
     context = {}
-    registos = Registo.objects.all()
-    context['registos'] = registos
+    query = "select * from caixas_registo"
+    edificios = []
+    current_user = request.user
+    if(current_user.is_supergestor):
+        edificios = Edificio.objects.all()
+    else:
+        relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
+        for rel in relacoes:
+            edificios.append(rel.edf)
 
+    context["edificios"] = edificios
+    
+    if request.GET:
+        if "edificio" in request.GET:
+            locais = Local.objects.filter(edificio_id = request.GET["edificio"])
+            for local in locais:
+                prixnt = Registo.objects.filter(local_atual_caixa = local.nome)
+        else:
+            print("")
+    else:
+        registos = Registo.objects.raw(query)
+        context['registos'] = registos
+    
+    
     return render(request,'registos.html',context)
 

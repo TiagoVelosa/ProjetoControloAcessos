@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Pessoas
+{% endblock %}
+
+{% block content %}
+<h3 style="margin-bottom: 2%;">Lista de pessoas</h3>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telemóvel</th>
+                <th>Cartão Atual</th>
+                <th>Editar</th>
+                                
+                
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telemóvel</th>
+                <th>Cartão Atual</th>
+                <th>Editar</th> 
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for pessoa in lista_pessoas %}
+                <tr>
+                    <td>{{pessoa}}</td>
+                    <td>{{pessoa.email}}</td>
+                    <td>{{pessoa.phone_number}}</td>       
+                    
+                        {% for rel in relacoes %}
+                            {% if rel.pessoa.id == pessoa.id %}
+                                <td>{{rel.cartao}}</td> 
+                            {% else %}
+                                <td>-------</td>
+                            {% endif %}
+                        {% endfor %}
+                    <td><a href ="{% url 'pessoas_editar' pessoa.id %}">[Editar Pessoa]</a></td>
+                                
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock %}

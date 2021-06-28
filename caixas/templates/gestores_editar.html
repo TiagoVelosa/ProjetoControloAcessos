@@ -1,34 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-Editar - Gestores
+Gestores
 {% endblock %}
 
 {% block content %}
-<div style="flex-direction: row; display: flex; margin-top: 1%; ">
-    <h1 style="width: 95%; color: rgb(33, 37, 41);">Editar</h1>
-    <button onclick="Hide('Editar_all')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-</div>
-<div class = "card mb-4"></div>
 
-<div id = "Editar_all" >
-    <div style="flex-direction: row; display: flex; ">
-        <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Gestor</h3>
-        <button onclick="Hide('Editar_Gestor')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-    </div>
+<div id = "Adicionar_all">
+    <h3 style="margin-top: 2%; color:  rgb(52, 58, 64);">Gestor Editar</h3>        
     <div class = "card mb-4"></div>
-    <div id = "Editar_Gestor">
-        
-        <form method="POST" action="" style="margin-bottom: 3%;">
-            {% csrf_token %}
-            <select name ="selecionar_gestor_editar">
-                {% for Gestor in todos_gestores %}
-                    <option value="{{Gestor.id}}">{{Gestor.first_name }} {{Gestor.last_name}}</option>
-                {% endfor %}                
-            </select>            
-            <button type ="submit">Selecionar</button>
-        </form>
-
+    
         <form method ="post"> 
             
             {% csrf_token %}
@@ -47,104 +28,12 @@ Editar - Gestores
             {% endfor %}
             <button type = "submit" style="margin-bottom: 2%;">Adicionar Gestor</button>
         </form>
-    </div>
-
-    <div style="flex-direction: row; display: flex; ">
-        <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Edificio</h3>
-        <button onclick="Hide('Editar_Edificio')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-    </div>
-    <div class = "card mb-4"></div>
-    <div id = "Editar_Edificio">
-        <form method="POST" action="" style="margin-bottom: 3%;">
-            {% csrf_token %}
-            <select name ="selecionar_edf_editar">
-                {% for Edificio in todos_edificios %}
-                    <option value="{{Edificio.id}}">{{Edificio.nome}}</option>
-                {% endfor %}                
-            </select>            
-            <button type ="submit">Selecionar</button>
-        </form>
-        <form method ="post"> 
-            {% csrf_token %}
-            {% if dados_invalidos %}
-                <div style = "color: red;">
-                    <p>{{dados_invalidos}}</p>
-                </div>
-            {% endif %}
-            {% for field in edificio_form %}
-                <p>
-                    {{field.label_tag}}
-                    {{field}}
-    
-                    {% if field.help_text %}
-                        <small style= "color: grey;">{{field.help_text}}</small>
-                    {% endif %}
-                    {% for error in field.erros %}
-                        <p style="color: red;">{{field.help_text}}</p>
-                    {% endfor %}                        
-                </p>
-            {% endfor %}
-    
-            {% if edificio_form.non_field_errors %}
-                        <div style = "color: red;">
-                            <p>{{edificio_form.non_field_errors}}</p>
-                        </div>
-                    {% endif %}
-            
-            <button type = "submit" style="margin-bottom: 2%;">Editar Edificio</button>
-    
-        </form>
-
-    </div>
-
-    <div style="flex-direction: row; display: flex; ">
-        <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Associação Gestor-Edificio</h3>
-        <button onclick="Hide('Editar_Rel')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-    </div>
-    <div class = "card mb-4"></div>
-    <div id = "Editar_Rel">
-        <form method="POST" action="" style="margin-bottom: 3%;">
-            {% csrf_token %}
-            <select name ="selecionar_relacao_editar">
-                {% for relacao in todas_relacoes %}
-                    <option value="{{relacao.id}}">{{relacao.gestor}} - {{relacao.edificio}} / {{relacao.data_inicio}} até {{relacao.data_fim}}</option>
-                {% endfor %}                
-            </select>            
-            <button type ="submit">Selecionar</button>
-        </form>
-
-        <form method ="post"> 
-            {% csrf_token %}
-            {% for error in form_rel.non_field_errors %}
-                <p style="color: red;"> {{error}} </p>
-            {% endfor %}
-            {% for field in form_rel %}
-                <p>
-                    {{field.label_tag}}
-                    {{field}}
-    
-                    {% if field.help_text %}
-                        <small style= "color: grey;">{{field.help_text}}</small>
-                    {% endif %}
-                    {% for error in field.erros %}
-                        <p style="color: red;">{{error}}</p>
-                    {% endfor %}                        
-                </p>
-            {% endfor %}
-            <button type = "submit" style="margin-bottom: 2%;">Editar Relação</button>
-        </form>
-    </div>
 </div>
-
-
-<script>
-    function Hide(componente) {
-      var x = document.getElementById(componente);
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
-</script>
+{% if messages %}
+<div class="alert alert-success alert-dismissible">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

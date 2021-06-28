@@ -101,3 +101,16 @@
     align-items: center;
     justify-content: space-between;
 }
+td,tr,th{
+    justify-self: center;
+    text-align: center;
+}
+.border_bottom{
+    border-bottom: 1px solid rgb(196, 196, 196);
+}
+.td_primeira_linha{
+    padding-top: 3px;
+}
+.p_detalhes{
+    margin: 0;
+}

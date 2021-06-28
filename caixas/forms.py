@@ -28,7 +28,7 @@ class FormAdicionarGestor(forms.ModelForm): #completo
 
 class EdificioForm(forms.ModelForm): #completo
     nome = forms.CharField(label="Nome", max_length=20)
-    descricao = forms.CharField(label="Descricão", max_length=50)
+    descricao = forms.CharField(label="Descricão", max_length=50 ,required=False)
 
     class Meta:
         model = Edificio
@@ -61,7 +61,7 @@ class DateInput(forms.DateInput):
 
 class LocalForm(forms.ModelForm): #completo
     nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Edificio', 'style': 'width: 50%; height: 30px;'}))
-    descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Edificio', 'style': 'width: 50%; height: 30px;'}))
+    descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Edificio', 'style': 'width: 50%; height: 30px;'}),required=False)
     edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width:50%; height:10%;'}))
 
     data_inicio = forms.DateTimeField(widget=DateInput())
@@ -101,12 +101,12 @@ class LocalForm(forms.ModelForm): #completo
             local.data_modificado=None
         local.save()
 
-class PessoaForm(forms.ModelForm): #completo
+class PessoaForm(forms.ModelForm): 
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
     phone_number = forms.CharField(max_length=15 ,label="Número de telemóvel")
-    descricao = forms.CharField(max_length = 50, label = "Descrição")
+    descricao = forms.CharField(max_length = 50, label = "Descrição",required=False)
 
     class Meta:
         model = Pessoa
@@ -118,20 +118,22 @@ class PessoaForm(forms.ModelForm): #completo
         last_name = cleaned_data["last_name"]
         email = cleaned_data["email"]
         phone_number = cleaned_data["phone_number"]
+        descricao = cleaned_data["descricao"]
+        
 
-        if(Pessoa.objects.filter(first_name=first_name,last_name=last_name,email=email,phone_number=phone_number)):
+        if(Pessoa.objects.filter(first_name=first_name,last_name=last_name,email=email,phone_number=phone_number, descricao = descricao)):
             raise forms.ValidationError("Já existe uma pessoa com esses dados!")
     
     
     def save(self,user,tipo):
         data = self.cleaned_data        
         if tipo=="editar":
-            pessoa = self.instance
+            pessoa = self.instance            
             pessoa.modificado_por= user
             pessoa.data_modificado=datetime.date.today()
                 
         else:
-            pessoa = Pessoa(first_name=data["first_name"],last_name = data['last_name'],email = data['email'],phone_number = data['phone_number'])
+            pessoa = Pessoa(first_name=data["first_name"],last_name = data['last_name'],email = data['email'],phone_number = data['phone_number'],descricao = data['descricao'])
             pessoa.criado_por= user
             pessoa.data_modificado=None
         pessoa.save()

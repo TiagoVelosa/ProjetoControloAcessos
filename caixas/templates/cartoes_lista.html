@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Cartões
+{% endblock %}
+
+{% block content %}
+<h3 style="margin-bottom: 2%;">Lista de cartoes</h3>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Cartão</th>
+                <th>Operacional</th>
+                <th>Pessoa Atual</th>
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                <th>Editar</th>
+                
+                              
+                
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Cartão</th>
+                <th>Operacional</th>
+                <th>Pessoa Atual</th>
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                <th>Editar</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for cartao in lista_cartao %}
+                <tr>
+                    <td>{{cartao}}</td>
+                    <td>{% if cartao.ativo %} Sim {% else %} Não {%endif%}</td>
+                    
+                        {% for rel in relacoes %}
+                            {% if rel.cartao.id == cartao.id %}
+                                <td>{{rel.pessoa}}</td>
+                                <td>{{rel.data_inicio}}</td>
+                                <td>{{rel.data_fim}}</td>
+                            {% else %}
+                                <td>-------</td>
+                                <td>-------</td>
+                                <td>-------</td>
+                            {% endif %}
+                        {% endfor %}
+                    <td><a href ="{% url 'cartoes_editar' cartao.id %}">[Editar]</a></td>
+                               
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock %}

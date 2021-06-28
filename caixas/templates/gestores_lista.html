@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+Gestores
+{% endblock %}
+
+{% block content %}
+<h2>Lista de Gestores</h2>
+{% if gestores %}
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nome</th>                
+                <th>Email</th>
+                <th>Super Gestor</th>
+                <th>Editar</th>
+                
+                
+                
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Super Gestor</th>
+                <th>Editar</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for gestor in gestores %}
+                <tr>
+                    <td><a href="">{{gestor}}</a></td>
+                    <td>{{gestor.email}}</td>
+                    <td>{{gestor.is_supergestor}}</td>
+                    <th><a href="{% url 'gestores_editar' gestor.id %}">[Editar]</a></th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% else %}
+    
+    <h2 class = "mt-4"> Não existem caixas inativas!</h2>
+
+{% endif %}
+
+{% endblock %}

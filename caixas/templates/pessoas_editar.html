@@ -6,10 +6,8 @@ Pessoas
 
 {% block content %}
 
-<div style="flex-direction: row; display: flex; ">
     <h3 style="width: 95%; color: rgb(52, 58, 64);">Editar Pessoa</h3>
-    <button onclick="Hide('Editar_Pessoa')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-</div>
+    
 <div class = "card mb-4"></div>
 <div id = "Editar_Pessoa">    
     <form method ="post"> 
@@ -35,15 +33,6 @@ Pessoas
 </div>
 
 
-<script>
-    function Hide(componente) {
-      var x = document.getElementById(componente);
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
-</script>
+
 {% endblock %}
 
