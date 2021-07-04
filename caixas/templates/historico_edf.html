@@ -1,18 +1,38 @@
+
+
 {% extends "base.html" %}
 
 {% block title %}
 Edificios
 {% endblock %}
 
-{% block content %}
-<h2 style="margin-top: 2%;">Histórico de locais do Edifício </h2>
-<div class = "card mb-4"></div>
 
-<h2>Selecione um edificio: </h2>
-<ul style="margin-top: 3%;">
-    {% for edf in edificios %}
-        <li class="linha_lista  "><a href="{% url 'edf_historico_id' edf.edificio.id %}" class="link_preto">{{edf.edificio.nome}}</a></li>
-    {% endfor %}
-</ul>
+
+{% block content %}
+<h2 class="titulo">Lista de edifícios</h2>
+<div class = "card mb-4"></div>
+<h4>Selecione um edificio: </h4> 
+{% if request.user.is_supergestor %}
+    {% if edificios %}
+        {% for edf in edificios %}
+            <div class = "cartao2" style="border-color: rgb(189, 189, 189); justify-content: space-between; " onclick="location.href='{% url 'edf_historico_id' edf.id %}' " >
+                <h2 style="margin-top: 1%; margin-left: 1%;">{{edf.nome}}</h2>
+                <h5 style="color: gray; margin-left: 1%;">{{edf.descricao}}</h5>   
+            </div>        
+        {% endfor %}
+    {% endif %}
+{% else %}
+    {% if edificios %}
+        {% for edf in edificios %}
+            <div class = "cartao2" style="border-color: rgb(189, 189, 189); justify-content: space-between; " onclick="location.href='{% url 'edf_historico_id' edf.edificio.id %}' " >
+                <h2 style="margin-top: 1%; margin-left: 1%;">{{edf.edificio.nome}}</h2>
+                <h5 style="color: gray; margin-left: 1%;">{{edf.edificio.descricao}}</h5>   
+            </div>        
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+
+
 
 {% endblock %}

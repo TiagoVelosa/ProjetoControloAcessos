@@ -15,43 +15,58 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from users.views import home_view, register_view, logout_view,login_view
+from users.views import *
 from caixas.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_view, name = "home"),
+    path('', home_page_view, name = "home"),
     path('registo/', register_view, name ="registo"),
     path('logout/', logout_view, name ="logout"),
-    path('login/', login_view, name ="login"),
+    path('login/', login_view, name ="login"),    
+    path('associar/cartoes_pessoas', associar_pessoa_cartao_view, name="associar_pessoa_cartao"),
+    
+    path('locais/adicionar', locais_view, name ="locais"),
+    path('locais/editar/<int:id>',local_editar_view, name ="locais_editar"),
+    path('locais/<int:id>',local_details_view, name="local_details"),
+
+    path('pessoas/adicionar', pessoas_view, name ="pessoas"),
+    path('pessoas/detalhes/<int:id>',pessoa_details_view, name = "pessoa_detalhes"),
+    
+    path('registos/', registos_view, name ="registos"),
+    path('cartoes/adicionar', adicionar_cartao, name ="cartoes"),
+    path('cartoes/detalhes/<int:id>', cartoes_details_view, name ="cartoes_detalhes"),
+    path('cartoes/editar/<int:id>', cartoes_editar_view, name ="cartoes_editar"),
+    path('pessoas/editar/<int:id>', pessoas_editar_view, name ="pessoas_editar"),    
+    
+    
+    
+    path('pessoas/lista',lista_pessoas_view,name ="lista_pessoas"),
+    path('cartoes/lista',lista_cartoes_view,name ="lista_cartoes"),
+    path('presencas.php',dados_caixas_view,name = "dados_caixas"),
+    path('pdf',generate_pdf,name="pdf"),
+    path('relacoes_edf_gestores/historico',historico_rel_edf_gestores,name="historico_rel"),
+
+    path('caixas/detalhes/<int:id>', caixa_details_view,name="caixa_detalhes"),
+    path('caixas/inativas',caixas_inativas, name = "caixas_inativas"),    
+    path('caixas/adicionar',adicionar_caixa_view, name = "adicionar_caixa"),
+    path('caixas/editar/<int:id>',caixas_editar_view, name ="caixas_editar"),
+    path('caixas/<int:id_local>', caixas_view_ids,  name= "caixas_ids"),
+    path('caixas/', caixas_view, name ="caixas"),
+    path('caixas/associar', caixas_associar_local, name ="associar_caixas_local"),
+    path('ativar_caixa/<int:caixa_id>',ativar_caixa,name ="ativar_caixa"),
+
     path('gestores/adicionar', gestores_adicionar_view, name ="gestores_adicionar"),
     path('gestores/lista', gestores_lista, name ="gestores_lista"),
     path('gestores/associar', gestores_associar_edf_view, name="gestores_associar_edf"),
     path('gestores/editar/<int:id>', gestores_editar_view,name = "gestores_editar"),
-    path('associar/cartoes_pessoas', associar_pessoa_cartao_view, name="associar_pessoa_cartao"),
-    path('caixas/', caixas_view, name ="caixas"),
-    path('caixas/associar', caixas_associar_local, name ="associar_caixas_local"),
-    path('locais/adicionar', locais_view, name ="locais"),
-    path('locais/editar/<int:id>',local_editar_view, name ="locais_editar"),
-    path('caixas/editar/<int:id>',caixas_editar_view, name ="caixas_editar"),
-    path('caixas/<int:id_local>', caixas_view_ids,  name= "caixas_ids"),
+    path('gestores/detalhes/<int:id>',gestores_details_view,name="gestor_detalhes"),
+
     path('edificios/', edf_geral_view, name ="edificios"),
-    path('pessoas/adicionar', pessoas_view, name ="pessoas"),
-    path('registos/', registos_view, name ="registos"),
-    path('cartoes/adicionar', adicionar_cartao, name ="cartoes"),
-    path('caixas/adicionar',adicionar_caixa_view, name = "adicionar_caixa"),
-    path('cartoes/editar/<int:id>', cartoes_editar_view, name ="cartoes_editar"),
-    path('pessoas/editar/<int:id>', pessoas_editar_view, name ="pessoas_editar"),
+    path('edificios/lista/', edf_lista_view, name="lista_edf"),
     path('edificios/historico/', historico_edf_view, name = "edf_historico" ),
     path('edificios/historico/<int:id>', historico_edf_id_view, name = "edf_historico_id" ),
-    path('edificio/<int:id>', edificio_details_view, name = "edf_details"),
-    path('caixas/inativas',caixas_inativas, name = "caixas_inativas"),
-    path('locais/<int:id>',local_details_view, name="local_details"),
-    path('edificio/adicionar',adicionar_edf,name="adicionar_edf"),
-    path('ativar_caixa/<int:caixa_id>',ativar_caixa,name ="ativar_caixa"),
-    path('pessoas/lista',lista_pessoas_view,name ="lista_pessoas"),
-    path('cartoes/lista',lista_cartoes_view,name ="lista_cartoes"),
-    path('sucesso',sucesso_view,name="sucesso"),
-    path('presencas.php',sucesso_view,name = "teste"),
-    path('pdf',generate_pdf,name="pdf"),
+    path('edificios/<int:id>', edificio_details_view, name = "edf_details"),    
+    path('edificios/adicionar',adicionar_edf,name="adicionar_edf"),
+    path('edificios/editar/<int:id>',editar_edf,name="editar_edf"),
 ]

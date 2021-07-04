@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Edificios
+{% endblock %}
+
+{% block content %}
+<h2 class="titulo">Lista de Edificios</h2>        
+<div class = "card mb-4"></div>    
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Gestores</th>
+                <th>Editar</th>
+                                
+                
+            </tr>
+        </thead>        
+        <tbody>
+            {% for edf in lista_edfs %}
+                <tr>
+                    <td>{{edf}}</td>
+                    <td>{{edf.descricao}}</td>
+                    {% for key, values in relacoes.items %}                    
+                        {% if key == edf.nome%}
+                            {% if values %}
+                                <td> 
+                                    {% for v in values %}
+                                        {% if forloop.last %} {{v.gestor}} {% else %} {{v.gestor}}, {% endif %} 
+                                    {% endfor %}
+                                    
+                                </td>
+                            {% else %}
+                                <td>Nenhum</td>
+                            {% endif %}                            
+                        {% endif %}
+                    {% endfor %}      
+                    
+                        
+                    <td><a href =" {% url 'editar_edf' edf.id %}">[Editar]</a></td>
+                                
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock %}

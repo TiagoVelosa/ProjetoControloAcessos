@@ -6,7 +6,8 @@ Pessoas
 {% endblock %}
 
 {% block content %}
-<h3 style="margin-bottom: 2%;">Lista de pessoas</h3>
+<h2 class="titulo">Lista de pessoas</h2>        
+<div class = "card mb-4"></div>    
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
@@ -34,14 +35,17 @@ Pessoas
                     <td>{{pessoa}}</td>
                     <td>{{pessoa.email}}</td>
                     <td>{{pessoa.phone_number}}</td>       
-                    
-                        {% for rel in relacoes %}
-                            {% if rel.pessoa.id == pessoa.id %}
-                                <td>{{rel.cartao}}</td> 
-                            {% else %}
-                                <td>-------</td>
-                            {% endif %}
-                        {% endfor %}
+                        {% if relacoes %}
+                            {% for rel in relacoes %}
+                                {% if rel.pessoa.id == pessoa.id %}
+                                    <td>{{rel.cartao}}</td> 
+                                {% else %}
+                                    <td>-------</td>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                         <td>-------</td>
+                        {% endif %}
                     <td><a href ="{% url 'pessoas_editar' pessoa.id %}">[Editar Pessoa]</a></td>
                                 
                     

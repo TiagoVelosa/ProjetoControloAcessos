@@ -6,34 +6,31 @@ Gestores
 
 {% block content %}
 
-<div id = "Adicionar_all">
-    <h3 style="margin-top: 2%; color:  rgb(52, 58, 64);">Adicionar Gestor</h3>        
-    <div class = "card mb-4"></div>
-    
-        <form method ="post"> 
-            
-            {% csrf_token %}
-            {% for field in form_gestor %}
-                <p>
-                    {{field.label_tag}}
-                    {{field}}
-    
-                    {% if field.help_text %}
-                        <small style= "color: grey;">{{field.help_text}}</small>
-                    {% endif %}
-                    {% for error in field.erros %}
-                        <p style="color: red;">{{field.help_text}}</p>
-                    {% endfor %}                        
-                </p>
-            {% endfor %}
-            <button type = "submit" style="margin-bottom: 2%;">Adicionar Gestor</button>
-        </form>
-</div>
+<h2 class="titulo">Adicionar Gestor</h2>        
+<div class = "card mb-4"></div>    
+    <form method ="post">             
+        {% csrf_token %}
+        {% for field in form_gestor %}
+            <p>
+                {{field.label_tag}}
+                {{field}}
+                {% if field.help_text %}
+                    <small style= "color: grey;">{{field.help_text}}</small>
+                {% endif %}
+                {% for error in field.erros %}
+                    <p style="color: red;">{{field.help_text}}</p>
+                {% endfor %}                        
+            </p>
+        {% endfor %}
+        <button type = "submit" style="margin-bottom: 2%;">Adicionar Gestor</button>
+    </form>
+
 {% if messages %}
-<div class="alert alert-success alert-dismissible">
-  {% for message in messages %}
-    <p>{{ message }}</p>
-  {% endfor %}
-</div>
+    <div class="alert alert-success alert-dismissible">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
 {% endif %}
+
 {% endblock %}

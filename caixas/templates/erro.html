@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Erro
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+<h2 class="titulo">Erro</h2>        
+<div class = "card mb-4"></div>
+
+<div> 
+  {% for message in messages %}
+    <p style="font-size: 22px; text-align: center;">{{ message }}</p>
+  {% endfor %}
+
+{% endif %}
+
+<input type=button value="Voltar Atrás" onClick="javascript:history.go(-1); " style =  "width: 20% ;margin-left: 40%; margin-right: 40%;">
+</div>
+{% endblock %}

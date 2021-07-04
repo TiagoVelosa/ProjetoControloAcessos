@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edificios
+{% endblock %}
+
+{% block content %}
+
+<h2 class="titulo">Histórico de relações</h2>
+<div class = "card mb-4"></div>
+
+
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Edificio</th>
+                <th>Gestor</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                
+            
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Edificio</th>
+                <th>Gestor</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for rel in relacoes %}
+                <tr>
+                    <td>{{rel.edificio}}</td>
+                    <td>{{rel.gestor}}</td>
+                    <td>{{rel.data_inicio|date:"d M Y"}}</td>
+                    <td>{{rel.data_fim|date:"d M Y"}}</td>                
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

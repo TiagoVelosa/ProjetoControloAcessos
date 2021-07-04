@@ -5,162 +5,34 @@ Caixas
 {% endblock %}
 
 {% block content %}
-
-{% if total == 1 %}
-<div style="display: flex; flex-direction: row;">
-    <h2 style="margin-top: 2%;">{{edificio}}</h2>
-    <h2 style=></h2>
-</div>
-
+<h2 class="titulo">Lista de caixas</h2>
 <div class = "card mb-4"></div>
-<h3 style="margin-bottom: 2%;">Locais ativos no edifício:</h3>
-{% if True %}
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-        <thead>
+<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Caixa</th>
+            <th>IP</th>
+            <th>Mac adress</th>
+            <th>Disponível</th>    
+        </tr>
+    </thead>    
+    <tbody>
+        {% for caixa in caixas %}
             <tr>
-                <th>Local</th>
                 
-                <th>Data Inicio</th>
-                <th>Data Fim</th>
-                <th>Editar</th>
-                <th>Adicionar Caixa</th>
+                <td>{{caixa.id}}</td>
+                <td><a href =" {% url 'caixa_detalhes' caixa.id %}">{{caixa.ip}}</a></td>
+                <td>{{caixa.mac_adress}}</td>
+                {% if caixa.ativo and local_atual_id == null %}
+                    <td>Disponível</td>
+                {% else %}
+                    <th>Não Disponível</th>
+                {% endif %}
+                           
                 
             </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Local</th>
-                
-                <th>Data Inicio</th>
-                <th>Data Fim</th>
-                <th>Editar</th>
-                <th>Adicionar Caixa</th>
-            </tr>
-        </tfoot>
-        <tbody>
-            {% for local in locais_edf %}
-                <tr>
-                    <td>{{local.nome}}</td>
+        {% endfor %}
+    </tbody>
+</table>
 
-                    <td>{{local.data_inicio}}</td>
-                    <td>{{local.data_fim}}</td>
-                    <td><a href ="{% url 'locais_editar' local.id %}"> Editar</a></td>
-                    <td><a href ="{% url 'locais_editar' local.id %}"> Adicionar Caixa</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-
-{% else %}
-    
-    <h2 class = "mt-4"> O edificio não tem locais!</h2>
-
-{% endif %}
-
-{% elif total > 1 %}
-<div style = "display: flex; flex-direction: row; justify-content: space-around;">
-    <div style="display: flex; flex-direction: row; align-items: baseline ;">
-        <h5 class = "mt-4">Selecione o edifício: </h5>
-        <form method="POST" action=".">        
-            {% csrf_token %}    
-            <select name = "edificio_id">
-                <option selected>Selecione o Edificio</option>
-                {% for relacao in edificios %}
-                    <option value = "{{relacao.edificio.id}}"> {{relacao.edificio.nome}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" value="Save">Mudar</button>
-        </form>
-        
-    </div>
-    <div div style="display: flex; flex-direction: row; align-items: baseline ;">
-        <h5 class = "mt-4">Selecione o Local: </h5>
-            <form method="POST" action="."> 
-                {% csrf_token %}    
-                <select name = "local_id">
-                    <option selected>Selecione o Local</option>
-                    {% for local in locais_edf %}
-                        <option value = "{{local.id}}"> {{local.nome}}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" value="Save">Mudar</button>
-            </form>
-    </div>
-</div>
-    
-    
-    <div class = "card mb-4"></div>
-    {% if edificio %}
-            <div style="display: flex; flex-direction: row;">
-                <h3 style="width: 50%;">{{edificio}} - {{local}}</h3>
-                <div style= "width: 50%; text-align: right;">
-                    <a href="{% url 'adicionar_caixa' %}" style="font-size: 20px;">Adicionar Caixa</a>
-                </div> 
-            </div>
-    {% else %}
-        <div>
-            <p>É necessário selecionar primeiro o edificio e depois o local!</p>
-        </div>
-
-    {% endif %}
-    <div class = "card mb-4"></div>
-    <h3 style="margin-bottom: 2%;">Caixas ativas no local:</h3>
-    {% if True %}
-        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>Caixa</th>
-                    <th>IP</th>                    
-                    <th>Data Inicio</th>
-                    <th>Data Fim</th>
-                    <th>Editar</th>
-                    <th>Remover</th>
-                    
-                    
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th>Caixa</th>
-                    <th>IP</th>                  
-                    <th>Data Inicio</th>
-                    <th>Data Fim</th>
-                    <th>Editar</th>
-                    <th>Remover</th>
-                    
-                </tr>
-            </tfoot>
-            <tbody>
-                {% for relacao_caixa in caixas_local %}
-                    <tr>
-                        <td>{{relacao_caixa.caixa_id}}</td>
-                        <td>{{relacao_caixa.caixa.ip}}</td>
-                        <td>{{relacao_caixa.data_inicio}}</td>
-                        <td>{{relacao_caixa.data_fim}}</td>
-                        <td><a href ="{% url 'caixas_editar' relacao_caixa.caixa_id %}"> [Editar]</a></td>
-                        <td><a href= "">[Remover]</a></td>
-                        
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-
-    {% else %}
-        
-        <h2 class = "mt-4"> O edificio não tem locais!</h2>
-
-    {% endif %}
-{% else %}
-
-
-<h1 class = "mt-4">Edifícios </h1>
-
-    <div class = "card mb-4">     
-    </div>
-<h2 class = "mt-4">Não tem edifícios associados!</h2>
-
-{% endif %}
 {% endblock %}

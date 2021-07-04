@@ -8,32 +8,36 @@ Registos
 
 
 
-<div style="display: flex; flex-direction: row; margin-top: 2%;" id = "not_printable">
-    <h3 style="width: 50%;">Relatório </h3>
-</div>
+<h2 class="titulo">Registos</h2>        
+<div class = "card mb-4"></div>  
 
-<p>Filtros:</p> 
+
 <form method="GET">   
     <div id = "filtros" style="justify-content: space-between;"></div>
         <label for="edificio">Edifício:</label>
         <select name ="edificio" id="edificio">
-            <option value="" disabled selected>Selecione o edifício:</option>
-            {% for edf in edificios %}               
-                <option value="{{edf.id}}"> {{edf}} </option>
-            {% endfor %}
+            <option value="" disabled selected>Selecione o edifício:</option>            
+                {% for edf in edificios %}               
+                    <option value="{{edf.id}}"> {{edf}} </option>
+                {% endfor %}
+            
         </select>
     
         <label for="data_inicio">Desde:</label>
         <input type="datetime-local" name="data_inicio">
         <label for="data_fim">Até</label>
         <input type="datetime-local" name="data_fim">
-        <button type="submit">Filtrar</button> 
+        <button type="submit">Filtrar</button>
+        <button type="submit" value="1" name="PDF">PDF</button> 
     </div> 
 </form>
 
+    
+
+
 <div class = "card mb-4"></div>
 {% if registos %}
-<div id = "Teste" style="overflow: scroll; height: 600px;">
+<div>
     <table  width="100%" cellspacing="0" >
         <thead >
             <tr>

@@ -48,7 +48,9 @@
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="{% url 'gestores_adicionar' %}">Adicionar Gestor</a>                                
                                 <a class="nav-link" href="{% url 'gestores_associar_edf' %}">Associar Gestor a Edificio</a>
+                                <a class="nav-link" href="{% url 'historico_rel' %}">Histórico de relações</a>
                                 <a class="nav-link" href="{% url 'gestores_lista' %}">Lista de Gestores</a>
+                                
 
                                 
                             </nav>
@@ -66,17 +68,30 @@
                                 
                                 {% if request.user.is_supergestor %}
                                 <a class="nav-link" href="{% url 'adicionar_edf' %}">Adicionar Edificio</a>
-                                <a class="nav-link" href="{% url 'locais' %}">Adicionar local</a>
-                                <a class="nav-link" href="{% url 'edificios' %}">Lista de Relações</a>
-                                <a class="nav-link" href="{% url 'edf_historico'%}">Histórico de locais!</a>
+                                <a class="nav-link" href="{% url 'lista_edf' %}">Lista de Edificios</a>
+                                <a class="nav-link" href="{% url 'edificios' %}">Relações ativas</a>
                                 {% else %}
                                 <a class="nav-link" href="{% url 'edificios' %}">Geral</a>
-                                <a class="nav-link" href="{% url 'locais' %}">Adicionar local</a>
-                                <a class="nav-link" href="{% url 'edf_historico'%}">Histórico de locais!</a>
                                 {% endif %}
                                 
                             </nav>
                         </div>
+
+                        
+                        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapseLocais" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            Locais
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLocais" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{% url 'locais' %}">Adicionar local</a>         
+                                <a class="nav-link" href="{% url 'edf_historico'%}">Histórico de locais!</a>
+
+                                
+                            </nav>
+                        </div>
+                        
 
                         <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapseCaixas" aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
@@ -85,7 +100,7 @@
                         </a>
                         <div class="collapse" id="collapseCaixas" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{% url 'caixas' %}">Lista de caixas num local!</a>
+                                <a class="nav-link" href="{% url 'caixas' %}">Lista de caixas</a>
                                 <a class="nav-link" href="{% url 'caixas_inativas' %}">Lista de caixas inativas!</a>
                                 <a class="nav-link" href="{% url 'adicionar_caixa'%}">Adicionar caixa!</a>
                             </nav>

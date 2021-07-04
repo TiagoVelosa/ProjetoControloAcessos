@@ -1,18 +1,23 @@
 {% extends "base.html" %}
 
 {% block title %}
-Cartões
+Edificios
 {% endblock %}
 
-{% block content %}
 
-<h2 class="titulo">Adicionar cartão</h2>        
+<h2 class="titulo">Editar Edifício</h2>        
 <div class = "card mb-4"></div>  
-<div id = "Adicionar_Cartao"> 
+      
+<div class = "card mb-4"></div>
+<div id = "Adicionar_Edf" >
     <form method ="post"> 
-        
         {% csrf_token %}
-        {% for field in cartao_form %}
+        {% if dados_invalidos %}
+            <div style = "color: red;">
+                <p>{{dados_invalidos}}</p>
+            </div>
+        {% endif %}
+        {% for field in edificio_form %}
             <p>
                 {{field.label_tag}}
                 {{field}}
@@ -25,12 +30,17 @@ Cartões
                 {% endfor %}                        
             </p>
         {% endfor %}
-        <button type = "submit" style="margin-bottom: 2%;">Criar Cartão</button>
+
+        {% if edificio_form.non_field_errors %}
+            <div style = "color: red;">
+                <p>{{edificio_form.non_field_errors}}</p>
+            </div>
+        {% endif %}
+        
+        <button type = "submit" style="margin-bottom: 2%;">Adicionar Edificio</button>
+
     </form>
 </div>
-
-
-
 {% if messages %}
 <div class="alert alert-success alert-dismissible">
   {% for message in messages %}
@@ -38,7 +48,4 @@ Cartões
   {% endfor %}
 </div>
 {% endif %}
-
-
-
-{% endblock %}
+{% block content %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cartão
+{% endblock %}
+
+{% block content %}
+<h2 class="titulo">Cartão {{cartao.id}}</h2>        
+<div class = "card mb-4"></div>
+
+
+<div class = "div_cartoes">    
+    <div class="details_cartao" >
+        <h4 style="margin: 1%;">Codigo Hexa:</h4>
+        <p class="p_texto">{{cartao.codigo_hexa}}</p>
+    </div>
+</div>
+
+
+<div>
+    <h4 class="segundo_titulo"> Histórico de Pessoas associadas: </h4>        
+    <div class = "card mb-4"></div>
+    {% if relacoes %}
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Pessoa</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                
+            
+            </tr>
+        </thead>        
+        <tbody>
+            {% for rel in relacoes %}
+                <tr>
+                    <td>{{rel.pessoa}}</td>
+                    <td>{{rel.data_inicio |date:"d M Y" }}</td>
+                    <td>{{rel.data_fim |date:"d M Y" }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>O cartão nunca foi associado a uma pessoa!</p>
+    {% endif %}
+
+</div>
+{% endblock %}

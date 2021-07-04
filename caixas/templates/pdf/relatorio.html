@@ -62,7 +62,7 @@
 
     <div>
 
-        <table class="table">
+        <table  width="100%" cellspacing="0" >
             <thead >
                 <tr>
                     <th rowspan = "2" class ="border_bottom">Registo</th>                
@@ -73,171 +73,24 @@
                 <tr>
                     <td class ="border_bottom">Data Servidor</td>
                     <td class ="border_bottom">ID Caixa</td>
-                    <td class ="border_bottom">Cartão ID</td>
+                    <td class ="border_bottom">Cartão</td>
                 </tr>
             </thead>
             <tbody>
+                {% for registo in registos%}
                 <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">Entrada Principal</td>
-                    <td class="td_primeira_linha">João</td>
+                    <th rowspan = "2" class ="border_bottom">{{registo.id}}</td>
+                    <td class="td_primeira_linha">{{ registo.data_servidor|date:"d M Y" }} {{ registo.data_servidor|time:"H:i" }}</td>                    
+                    <td class="td_primeira_linha">{{registo.local_atual_caixa}}</td>
+                    <td class="td_primeira_linha">{{registo.nome_atual_cartao}}</td>
                 </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">7</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">3561477</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-                <tr>
-                    <th rowspan = "2" class ="border_bottom">125</td>
-                    <td class="td_primeira_linha">26-06-2021 16:05:43</td>                    
-                    <td class="td_primeira_linha">x</td>
-                    <td class="td_primeira_linha">x</td>
-                </tr>
-
-                <tr>
-                    <td class ="border_bottom" style="font-size:smaller; ">26-06-2021 16:05:43</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>
-                    <td class ="border_bottom" style="font-size:smaller; ">x</td>     
-                </tr>
-
-
-                {% for registo in registos %}
-                    <tr style="text-align: center;  ">
-                        <td rowspan = "2" style="vertical-align: middle; font-size:larger; ">{{forloop.counter}}x</td>
-                        <td style="background-color: rgb(196, 196, 196);">{{registo.data_caixa}}</td>                    
-                        <td style="background-color: rgb(196, 196, 196);">{{registo.caixa.local_atual_id}}</td>
-                        <td style="background-color: rgb(196, 196, 196);">{{registo.cartao.codigo_hexa}}</td>
-                    </tr>
     
-                    <tr style="text-align: center; ">
-                        <td style="font-size:smaller; ">{{registo.data_servidor}}</td>
-                        <td style="font-size:smaller; ">{{registo.caixa_id}}</td>
-                        <td style="font-size:smaller; ">{{registo.cartao.codigo_hexa}}</td>     
-                    </tr>
-                {% endfor %}               
-    
+                <tr>
+                    <td class ="border_bottom" style="font-size:smaller; ">{{ registo.data_caixa|date:"d M Y" }} {{ registo.data_caixa|time:"H:i" }}</td>
+                    <td class ="border_bottom" style="font-size:smaller; ">{{registo.caixa_id}}</td>  
+                    <td class ="border_bottom" style="font-size:smaller; ">{{registo.cartao}}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
 

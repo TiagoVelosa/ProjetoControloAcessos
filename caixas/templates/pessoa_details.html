@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+Pessoa
+{% endblock %}
+
+{% block content %}
+<h2 class="titulo">{{pessoa}}</h2>        
+<div class = "card mb-4"></div>
+
+
+<div class = "div_locais">    
+    <div class="details" >
+        <h4 style="margin: 1%;">Nome:</h4>
+        <p class="p_texto">{{pessoa}}</p>
+    </div>
+    <div class="details_gestores" >
+        <h4 style="margin: 1%;">Email:</h4>
+        <p class="p_texto">{{pessoa.email}}</p>
+    </div>
+    <div class="details" >
+        <h4 style="margin: 1%;">Contacto:</h4>
+        <p class = "p_texto">{{pessoa.phone_number}}</p>            
+    </div>   
+</div>
+
+
+<div>
+    <h4 class="segundo_titulo"> Histórico de Cartões associadas: </h4>        
+    <div class = "card mb-4"></div>
+    {% if relacoes %}
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Cartão</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                
+            
+            </tr>
+        </thead>        
+        <tbody>
+            {% for rel in relacoes %}
+                <tr>
+                    <td>{{rel.cartao}}</td>
+                    <td>{{rel.data_inicio |date:"d M Y" }}</td>
+                    <td>{{rel.data_fim |date:"d M Y" }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>A pessoa nunca teve um cartão associado!</p>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -5,7 +5,8 @@ Gestores
 {% endblock %}
 
 {% block content %}
-<h2>Lista de Gestores</h2>
+<h2 class="titulo">Lista de  Gestores</h2>        
+<div class = "card mb-4"></div>  
 {% if gestores %}
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
@@ -13,24 +14,14 @@ Gestores
                 <th>Nome</th>                
                 <th>Email</th>
                 <th>Super Gestor</th>
-                <th>Editar</th>
-                
-                
-                
+                <th>Editar</th>      
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Super Gestor</th>
-                <th>Editar</th>
-            </tr>
-        </tfoot>
+
         <tbody>
             {% for gestor in gestores %}
                 <tr>
-                    <td><a href="">{{gestor}}</a></td>
+                    <td><a href="{% url 'gestor_detalhes' gestor.id %}">{{gestor}}</a></td>
                     <td>{{gestor.email}}</td>
                     <td>{{gestor.is_supergestor}}</td>
                     <th><a href="{% url 'gestores_editar' gestor.id %}">[Editar]</a></th>

@@ -6,11 +6,8 @@ Edificios
 
 {% block content %}
 
-<div style="flex-direction: row; display: flex; ">
-    <h3 style="width: 95%; color: rgb(52, 58, 64);">Associar Gestor a Edificio</h3>
-    <button onclick="Hide('Associar_Gestor_Edificio')" class ="btn btn-link btn-sm order-1 order-lg-0" ><i class="far fa-minus-square"></i></button >    
-</div>
-<div class = "card mb-4"></div>
+<h2 class="titulo">Associar Gestor a Edifício</h2>        
+<div class = "card mb-4"></div>  
 <div id = "Associar_Gestor_Edificio">    
     <form method ="post"> 
         {% csrf_token %}

@@ -26,6 +26,16 @@ class FormAdicionarGestor(forms.ModelForm): #completo
         if(Gestor.objects.filter(email = email)):
             raise forms.ValidationError("Já existe um gestor com esse email!")
 
+class FormEditarGestor(forms.ModelForm):
+    first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
+    last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
+    is_supergestor = forms.BooleanField(required=False, initial=False, label = "Supergestor")
+
+    class Meta:
+        model= Gestor
+        fields = ("first_name","last_name")
+    
+
 class EdificioForm(forms.ModelForm): #completo
     nome = forms.CharField(label="Nome", max_length=20)
     descricao = forms.CharField(label="Descricão", max_length=50 ,required=False)

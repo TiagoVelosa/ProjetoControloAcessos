@@ -25,7 +25,7 @@ SECRET_KEY = 'u(b71$3wiqs^%)h^2e-=$apvfs4d803if62x_r!=vg*mz_#=6$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition

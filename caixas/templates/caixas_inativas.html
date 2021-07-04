@@ -33,11 +33,11 @@ Caixas
                 <tr>
                     <td>{{caixa.id}}</td>
                     <td>{{caixa.ip}}</td>
-                    <td>{{caixa.data_criacao}}</td>
+                    <td>{{caixa.data_criacao|date:"d M Y"}}</td>
                     {% if caixa.data_desativacao %}
-                        <td>{{caixa.data_desativacao}}</td>
+                        <td>{{caixa.data_desativacao|date:"d M Y"}}</td>
                     {% else %}
-                        <td>{{caixa.data_criacao}}</td>
+                        <td>{{caixa.data_criacao|date:"d M Y"}}</td>
                     {%endif%}
                     <td><a onclick="return confirm('Tem a certeza que pretente ativar a caixa?');" href ="{% url 'ativar_caixa' caixa.id %}"> Ativar Caixa</a></td>
                 </tr>

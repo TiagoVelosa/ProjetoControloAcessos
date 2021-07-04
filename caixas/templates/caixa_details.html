@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+Caixa
+{% endblock %}
+
+{% block content %}
+<h2 class="titulo">Caixa {{caixa.id}}</h2>        
+<div class = "card mb-4"></div>
+
+
+<div class = "div_locais">    
+    <div class="details_caixas" >
+        <h4 style="margin: 1%;">IP:</h4>
+        <p class="p_texto">{{caixa.ip}}</p>
+    </div>
+    <div class="details_caixas" >
+        <h4 style="margin: 1%;">Mac Address:</h4>
+        <p class="p_texto">{{caixa.mac_adress}}</p>
+    </div>
+    </div>
+    <div class = "div_locais">
+    <div class="details_caixas" >
+        <h4 style="margin: 1%;">No uso:</h4>
+        <p class = "p_texto">{% if caixa.local_atual_id %} Sim {% else %} Não {% endif %}</p>            
+    </div>
+    <div class="details_caixas" >
+        <h4 style="margin: 1%;">Ativa:</h4>
+        <p class = "p_texto">{% if caixa.ativo %} Sim {% else %} Não {% endif %}</p>            
+    </div>    
+</div>
+
+
+<div>
+    <h4 class="segundo_titulo"> Histórico de locais: </h4>        
+    <div class = "card mb-4"></div>
+    {% if relacoes %}
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Local</th>                    
+                <th>Data Inicio</th>
+                <th>Data Fim</th>
+                
+            
+            </tr>
+        </thead>        
+        <tbody>
+            {% for rel in relacoes %}
+                <tr>
+                    <td>{{rel.local}}</td>
+                    <td>{{rel.data_inicio |date:"d M Y" }}</td>
+                    <td>{{rel.data_fim |date:"d M Y" }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>A caixa nunca foi associada a um local!</p>
+    {% endif %}
+
+</div>
+{% endblock %}
