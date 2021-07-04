@@ -55,6 +55,7 @@ urlpatterns = [
     path('caixas/', caixas_view, name ="caixas"),
     path('caixas/associar', caixas_associar_local, name ="associar_caixas_local"),
     path('ativar_caixa/<int:caixa_id>',ativar_caixa,name ="ativar_caixa"),
+    path('desativar_caixa/<int:caixa_id>',desativar_caixa,name ="desativar_caixa"),
 
     path('gestores/adicionar', gestores_adicionar_view, name ="gestores_adicionar"),
     path('gestores/lista', gestores_lista, name ="gestores_lista"),

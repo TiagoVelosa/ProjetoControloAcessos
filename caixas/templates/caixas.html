@@ -13,21 +13,28 @@ Caixas
             <th>Caixa</th>
             <th>IP</th>
             <th>Mac adress</th>
-            <th>Disponível</th>    
+            <th>Disponível</th>
+            <th>Editar</th>
+            <th>Ativar/Desativar</th>    
         </tr>
     </thead>    
     <tbody>
         {% for caixa in caixas %}
-            <tr>
-                
+            <tr>                
                 <td>{{caixa.id}}</td>
-                <td><a href =" {% url 'caixa_detalhes' caixa.id %}">{{caixa.ip}}</a></td>
-                <td>{{caixa.mac_adress}}</td>
+                <td ><a href =" {% url 'caixa_detalhes' caixa.id %}">{{caixa.ip}}</a></td>
+                <td >{{caixa.mac_adress}}</td>
                 {% if caixa.ativo and local_atual_id == null %}
                     <td>Disponível</td>
                 {% else %}
                     <th>Não Disponível</th>
                 {% endif %}
+                <td><a href="{% url 'caixas_editar' caixa.id %}">[EDITAR]</a></td>
+                {% if caixa.ativo %}
+                <td><a onclick="return confirm('Tem a certeza que pretente desativar a caixa?');" href ="{% url 'desativar_caixa' caixa.id %}"> Desativar Caixa</a></td>
+                {% else %}
+                <td><a onclick="return confirm('Tem a certeza que pretente ativar a caixa?');" href ="{% url 'ativar_caixa' caixa.id %}"> Ativar Caixa</a></td>
+                {%endif%}
                            
                 
             </tr>

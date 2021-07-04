@@ -31,7 +31,22 @@ def ativar_caixa(request,caixa_id):
         caixa.modificado_por= gestor_name
         caixa.data_modificado = datetime.date.today()
         caixa.save()
-        return HttpResponseRedirect('/caixas/inativas')
+        return HttpResponseRedirect('/caixas/')
+
+def desativar_caixa(request,caixa_id):
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
+    try:
+        caixa = Caixa.objects.get(id=caixa_id)
+    except Caixa.DoesNotExist:
+        messages.ERROR("Caixa não existe!")    
+    caixa.ativo = False
+    if (not caixa.ativo):
+        messages.success(request,"Caixa desativada com sucesso!")
+        caixa.modificado_por= gestor_name
+        caixa.data_modificado = datetime.date.today()
+        caixa.save()
+        return HttpResponseRedirect('/caixas/')
 
 def caixas_inativas(request):
     context = {}
