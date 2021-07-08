@@ -1,14 +1,18 @@
 
+from caixas.database_queries import *
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import fields, widgets
+from django.http import request
 from django.shortcuts import redirect
 from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
 from caixas.widgets import PickerInput
+from .validation import *
 import datetime
 
-class FormAdicionarGestor(forms.ModelForm): #completo
+
+class FormAdicionarGestor(forms.ModelForm): 
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
@@ -36,7 +40,7 @@ class FormEditarGestor(forms.ModelForm):
         fields = ("first_name","last_name")
     
 
-class EdificioForm(forms.ModelForm): #completo
+class EdificioForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     nome = forms.CharField(label="Nome", max_length=20)
     descricao = forms.CharField(label="Descricão", max_length=50 ,required=False)
 
@@ -48,15 +52,13 @@ class EdificioForm(forms.ModelForm): #completo
         cleaned_data = super(EdificioForm,self).clean()
         nome = cleaned_data["nome"]
         if(Edificio.objects.filter(nome = nome)):
-            raise forms.ValidationError("Já existe um edifício com esse nome!")
-    
+            raise forms.ValidationError("Já existe um edifício com esse nome!")    
     def save(self,user,tipo):
         data = self.cleaned_data        
         if tipo=="editar":
             edf = self.instance
             edf.modificado_por= user
-            edf.data_modificado=datetime.date.today()
-                
+            edf.data_modificado=datetime.date.today()                
         else:
             edf = Edificio(nome=data["nome"],descricao = data['descricao'])
             edf.criado_por= user
@@ -69,14 +71,13 @@ class EdificioForm(forms.ModelForm): #completo
 class DateInput(forms.DateInput):
     input_type='date'
 
-class LocalForm(forms.ModelForm): #completo
-    nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Edificio', 'style': 'width: 50%; height: 30px;'}))
-    descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Edificio', 'style': 'width: 50%; height: 30px;'}),required=False)
-    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width:50%; height:10%;'}))
+class LocalForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
+    nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Local', 'style': 'width: 50%; height: 30px;'}))
+    descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Local', 'style': 'width: 50%; height: 30px;'}),required=False)
+    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width: 50%; height: 30px;'}))
 
     data_inicio = forms.DateTimeField(widget=DateInput())
-    data_fim = forms.DateTimeField(widget=DateInput())
-    
+    data_fim = forms.DateTimeField(widget=DateInput(), required=False)   
 
     class Meta:
         model = Local
@@ -86,17 +87,13 @@ class LocalForm(forms.ModelForm): #completo
         cleaned_data = super(LocalForm, self).clean()
         if not cleaned_data['data_fim']:
             cleaned_data['data_fim'] = None
-
         nome = cleaned_data['nome']
         descricao = cleaned_data['descricao']
         data_inicio = cleaned_data['data_inicio']
         data_fim = cleaned_data['data_fim']
         if(Local.objects.filter(data_inicio=data_inicio, nome=nome, descricao = descricao, data_fim=data_fim).exists()):
-            raise forms.ValidationError("Esse local já existe! ")
-        if(data_fim != None):
-            if(data_inicio>data_fim):
-                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
-        return cleaned_data
+            raise forms.ValidationError("ERRO: local já existe! ")
+        verifica_data(data_inicio,data_fim)
 
     def save(self,user,tipo):
         data = self.cleaned_data        
@@ -111,7 +108,7 @@ class LocalForm(forms.ModelForm): #completo
             local.data_modificado=None
         local.save()
 
-class PessoaForm(forms.ModelForm): 
+class PessoaForm(forms.ModelForm):  # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
@@ -133,6 +130,9 @@ class PessoaForm(forms.ModelForm):
 
         if(Pessoa.objects.filter(first_name=first_name,last_name=last_name,email=email,phone_number=phone_number, descricao = descricao)):
             raise forms.ValidationError("Já existe uma pessoa com esses dados!")
+        verifica_nome(first_name)
+        verifica_nome(last_name)
+        verifica_numero_telemovel(phone_number)
     
     
     def save(self,user,tipo):
@@ -148,7 +148,7 @@ class PessoaForm(forms.ModelForm):
             pessoa.data_modificado=None
         pessoa.save()
 
-class CartaoForm(forms.ModelForm): #completo
+class CartaoForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     codigo_hexa = forms.CharField(max_length=50)
 
     class Meta:
@@ -160,6 +160,7 @@ class CartaoForm(forms.ModelForm): #completo
         codigo_hexa = cleaned_data["codigo_hexa"]
         if(Cartao.objects.filter(codigo_hexa= codigo_hexa)):
             raise forms.ValidationError("Já existe um cartão com esse código!")
+        verifica_hexadecimal(codigo_hexa)
     
     def save(self,user,tipo):
         data = self.cleaned_data        
@@ -176,15 +177,14 @@ class CartaoForm(forms.ModelForm): #completo
 
 
 
-class Form_Cartao_Pessoa(forms.ModelForm): #completo
-    data_inicio = forms.DateTimeField(widget=DateInput())
-    data_fim = forms.DateTimeField(widget=DateInput())
+class Form_Cartao_Pessoa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar)
     cartao = forms.ModelChoiceField(queryset=Cartao.objects.all(),empty_label="Selecione o Cartão",initial=0)
     pessoa = forms.ModelChoiceField(queryset=Pessoa.objects.all(),empty_label="Selecione a Pessoa",initial=0)
-    
+    data_inicio = forms.DateTimeField(widget=DateInput())
+    data_fim = forms.DateTimeField(widget=DateInput())
     class Meta:
         model = Pessoa_Cartao
-        fields = ("data_inicio","data_fim","cartao","pessoa")
+        fields = ("cartao","pessoa","data_inicio","data_fim")
 
     def clean(self):
         cleaned_data = super(Form_Cartao_Pessoa, self).clean()
@@ -197,10 +197,9 @@ class Form_Cartao_Pessoa(forms.ModelForm): #completo
         data_fim = cleaned_data['data_fim']
         if(Pessoa_Cartao.objects.filter(data_inicio=data_inicio, cartao=cartao, pessoa = pessoa, data_fim=data_fim).exists()):
             raise forms.ValidationError("Cartão já associado com esses dados!")
-        if(data_fim != None):
-            if(data_inicio>data_fim):
-                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
-        return cleaned_data
+        verifica_data(data_inicio,data_fim)
+        verifica_cartao_no_uso(cartao.id,data_inicio,data_fim)
+        verifica_pessoa_tem_cartao(pessoa.id,data_inicio,data_fim)
     
     def save(self,user,tipo):
             data = self.cleaned_data        
@@ -216,16 +215,20 @@ class Form_Cartao_Pessoa(forms.ModelForm): #completo
             pessoa_cartao.save()
 
 
-class Form_Caixa_Local(forms.ModelForm): #completo
-    local = forms.ModelChoiceField(queryset=Local.objects.all(),empty_label="Selecione o Cartão",initial=0)
-    caixa = forms.ModelChoiceField(queryset=Caixa.objects.all(),empty_label="Selecione o Cartão",initial=0)
+class Form_Caixa_Local(forms.ModelForm): 
+    local = forms.ModelChoiceField(queryset=None,empty_label="Selecione o local")
+    caixa = forms.ModelChoiceField(queryset=Caixa.objects.all(),empty_label="Selecione a caixa")
     data_inicio = forms.DateTimeField(widget=DateInput())
     data_fim = forms.DateTimeField(widget=DateInput())
 
+    def __init__(self,request,*args, **kwargs):
+        super(Form_Caixa_Local, self).__init__(*args, **kwargs)
+        self.fields['local'].queryset = query_set_locais_ativos_associados_a_gestor(request)
+
     class Meta:
         model = Caixa_Local
-        fields = ("local","caixa","data_inicio","data_fim")
-    
+        fields = ("local","caixa","data_inicio","data_fim")       
+
     def clean(self):
         cleaned_data = super(Form_Caixa_Local, self).clean()
         if not cleaned_data['data_fim']:
@@ -237,10 +240,9 @@ class Form_Caixa_Local(forms.ModelForm): #completo
         data_fim = cleaned_data['data_fim']
         if(Caixa_Local.objects.filter(data_inicio=data_inicio, local=local, caixa = caixa, data_fim=data_fim).exists()):
             raise forms.ValidationError("Já existe uma caixa adicionada com esses dados!")
-        if(data_fim != None):
-            if(data_inicio>data_fim):
-                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
-        return cleaned_data
+        verifica_data(data_inicio,data_fim)
+        verifica_caixa_no_uso(caixa.id,data_inicio,data_fim)
+        verifica_data_caixa_local(local.id,data_inicio,data_fim)        
     
     def save(self,user,tipo):
             data = self.cleaned_data        
@@ -256,42 +258,36 @@ class Form_Caixa_Local(forms.ModelForm): #completo
             caixa_local.save()
 
 
-class Form_Caixa(forms.ModelForm): #completo
-    
-    ip = forms.CharField(max_length=50)
-    mac_adress = forms.CharField(max_length=50)
+class Form_Caixa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
+    mac_address = forms.CharField(max_length=50)
     token_seguranca = forms.CharField(max_length=50)
-    ativo = forms.BooleanField(required=False, initial=False, label = "Ativo")
+    utilizavel = forms.BooleanField(required=False, initial=False, label = "Utilizável")
     class Meta:
         model = Caixa
-        fields = ("ip","mac_adress","token_seguranca","ativo")
+        fields = ("mac_address","token_seguranca","utilizavel")
 
     def clean(self):
-        cleaned_data = super(Form_Caixa, self).clean()
-        ip = cleaned_data['ip']
-        token_seguranca = cleaned_data['token_seguranca']
-        if(Caixa.objects.filter(ip = ip)):
-            raise forms.ValidationError("Já existe uma caixa com esse ip!")
-        if(Caixa.objects.filter(token_seguranca=token_seguranca)):
-            raise forms.ValidationError("Já existe uma caixa com esse token!")
-        return cleaned_data
+        cleaned_data = super(Form_Caixa, self).clean()    
+        mac_address = cleaned_data["mac_address"]
+        if(Caixa.objects.filter(mac_address=mac_address)):
+            raise forms.ValidationError("Já existe uma caixa com esse MAC address!")
+        verifica_mac_address(mac_address)      
 
     def save(self,user,tipo):
         data = self.cleaned_data        
         if tipo=="editar":
             caixa = self.instance
             caixa.modificado_por= user
-            caixa.data_modificado=datetime.date.today()
-            
+            caixa.data_modificado=datetime.date.today()            
         else:
-            caixa = Caixa(ip=data["ip"],mac_adress = data['mac_adress'],token_seguranca = data['token_seguranca'],ativo = data['ativo'])
+            caixa = Caixa(mac_address = data['mac_address'],token_seguranca = data['token_seguranca'],utilizavel = data['utilizavel'])
             caixa.criado_por= user
             caixa.data_modificado=None
         caixa.save()
 
     
 
-class Form_Edf_Gestor(forms.ModelForm): #completo
+class Form_Edf_Gestor(forms.ModelForm): 
     data_inicio = forms.DateTimeField(widget=DateInput())
     data_fim = forms.DateTimeField(widget=DateInput())
     gestor = forms.ModelChoiceField(queryset=Gestor.objects.all(),empty_label="Selecione o Gestor",initial=0)

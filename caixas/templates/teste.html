@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+teste
+{% endblock %}
+
+{% block content %}
+
+
+
+{% if edificios %}
+
+{% for edf in edificios %}
+<p>{{edf.id}}</p>
+{% endfor %}
+{% else %}
+X
+{%endif%}
+
+
+
+
+{% endblock %}

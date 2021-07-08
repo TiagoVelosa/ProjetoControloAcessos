@@ -55,41 +55,50 @@ def caixas_inativas(request):
 
     return render(request, "caixas_inativas.html",context)
 
-def caixas_editar_view(request,id):
+def editar_caixa_view(request,id):
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
     context = {}
-    try:
-        caixa = Caixa.objects.get(id=id)
-    except Caixa.DoesNotExist:
-        context['erro_nao_existe'] = "ERRO - Caixa não encontrada!"
-    form_caixa = Form_Caixa(instance=caixa)
+    if Caixa.objects.filter(id=id):
+        local = Caixa.objects.get(id=id)
+    else:
+        messages.error(request,"Caixa não encontrada!")
+        return render(request,"erro.html",context)   
     
     if request.POST:        
-        form_caixa = Form_Caixa(request.POST,instance=caixa)
-        context['caixas_form'] = form_caixa
-        if form_caixa.is_valid():
-           
-            form_caixa.save()
-            context['sucesso'] = "Caixa editada com sucesso!"
-            form_caixa = Form_Caixa()
-            return HttpResponseRedirect("cartoes_editar")
+        form = Form_Caixa(request.POST,instance=local)
+        if form.is_valid():
+            form.save(gestor_name,"editar")
+            messages.success(request, "Caixa editada com sucesso! ")
+            return HttpResponseRedirect("/caixas/adicionar")
+    else:
+        form = Form_Caixa(instance=local)
     
-    
-    context['caixas_form']=form_caixa
-    return render(request,'caixas_editar.html',context)
+    context['form']=form
+    context['titulo'] = "Caixa"
+    context['header'] = "Editar Caixa"
+    context['button'] = "Editar Caixa"
+    return render(request,'adicionar_editar.html',context)
 
 def adicionar_caixa_view(request): 
     context = {}
     user = request.user
-    gestor_name = str(user.first_name + " " + user.last_name) 
-    form_caixa = Form_Caixa()
-    context['form_caixa'] = form_caixa
-    if request.POST:        
+    gestor_name = str(user.first_name + " " + user.last_name)    
+    if request.POST:
         form_caixa = Form_Caixa(request.POST)
-        if form_caixa.is_valid():
+        if form_caixa.is_valid():            
             form_caixa.save(gestor_name,"criar")
-            messages.success(request, "Caixa criada com sucesso! ") 
-            return HttpResponseRedirect('/caixas/adicionar')         
-    return render(request, "adicionar_caixa.html",context)
+            messages.success(request, "Caixa criada com sucesso!") 
+            return HttpResponseRedirect('/caixas/adicionar')
+    else:
+        form_caixa = Form_Caixa(None)
+
+    context['form'] = form_caixa
+    context['titulo'] = "Caixa"
+    context['header'] = "Adicionar Caixa"
+    context['button'] = "Adicionar Caixa"
+    return render(request, "adicionar_editar.html",context)
+
 
 def caixas_view(request):
     context = {}

@@ -34,30 +34,31 @@ class Local(models.Model):
     data_modificado = models.DateField(blank=True, null=True)
     modificado_por = models.CharField(blank=True,max_length=50,null=True)
     criado_por = models.CharField(max_length=50)
+    data_criacao = models.DateField(auto_now_add=True)
+
     nome = models.CharField(max_length=20)
     descricao = models.CharField(max_length=50, blank=True)
-    edificio = models.ForeignKey(Edificio, on_delete=models.SET_NULL,null=True)
-    data_criacao = models.DateField(auto_now_add=True)
+    edificio = models.ForeignKey(Edificio, on_delete=models.SET_NULL,null=True)        
     data_inicio = models.DateField(blank=True, null=True,help_text = "Formato: YYYY-MM-DD")
     data_fim = models.DateField(blank=True, null=True,help_text = "Formato: YYYY-MM-DD")
     def __str__(self):
-        return self.nome   
+        return self.nome + " - " + self.edificio.nome
+     
 
 class Caixa(models.Model):
-    ativo = models.BooleanField(default = True)
-    local_atual_id = models.ForeignKey(Local,blank=True, null=True,on_delete=models.SET_NULL) #Talvez mudar?
-    token_seguranca = models.CharField(max_length=50)
-    data_desativacao = models.DateField(blank=True, null=True)
-    
-    ip = models.CharField(max_length=50,default="0.0.0.0")
-    mac_adress = models.CharField(max_length=50,default="0.0.0.0")
+
     data_criacao = models.DateField(auto_now_add=True)
     data_modificado = models.DateField(blank=True, null=True)
     modificado_por = models.CharField(blank=True,max_length=50,null=True)
     criado_por = models.CharField(max_length=50)
-        
+    utilizavel = models.BooleanField(default = True)
+    local_atual_id = models.ForeignKey(Local,blank=True, null=True,on_delete=models.SET_NULL) 
+    token_seguranca = models.CharField(max_length=50)
+    data_desativacao = models.DateField(blank=True, null=True)
+    mac_address = models.CharField(max_length=50,default="0.0.0.0", unique=True, error_messages={'unique':"Já existe uma caixa com este mac_address!"})
+
     def __str__(self):
-        return str(self.ip)
+        return str(self.mac_address)
 
 class Cartao(models.Model):
     ativo = models.BooleanField(default=True)
@@ -75,7 +76,7 @@ class Cartao(models.Model):
 
 class Registo(models.Model):
     caixa = models.ForeignKey(Caixa,on_delete=models.SET_NULL,null=True)
-    cartao = models.ForeignKey(Cartao,on_delete=models.SET_NULL,null=True)
+    codigo_hexa_cartao = models.CharField(max_length=30, default="default")
     data_caixa = models.DateTimeField(blank=True, null=True)
     data_servidor = models.DateTimeField(blank=True, null=True)
     validado = models.BooleanField(default=True)
@@ -84,7 +85,6 @@ class Registo(models.Model):
     data_modificado = models.DateField(blank=True, null=True)
     modificado_por = models.CharField(blank=True,max_length=50,null=True)
     criado_por = models.CharField(max_length=50)
-    nome_atual_cartao = models.CharField(max_length=50,default="default",null=True,blank=True)
     local_atual_caixa = models.CharField(max_length=50,default="default",null=True,blank=True)
     
 

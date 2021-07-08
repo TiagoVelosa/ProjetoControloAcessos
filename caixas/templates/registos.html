@@ -44,27 +44,25 @@ Registos
                 <th rowspan = "2" class ="border_bottom">Registo</th>                
                 <th>Data Caixa</th>
                 <th>Local</th>
-                <th>Pessoa</th>                
+                <th rowspan = "2" class ="border_bottom">Cartão</th>                
             </tr>
             <tr>
                 <td class ="border_bottom">Data Servidor</td>
                 <td class ="border_bottom">ID Caixa</td>
-                <td class ="border_bottom">Cartão</td>
             </tr>
         </thead>
         <tbody>
             {% for registo in registos%}
             <tr>
-                <th rowspan = "2" class ="border_bottom">{{registo.id}}</td>
+                <td rowspan = "2" class ="border_bottom">{{registo.id}}</td>
                 <td class="td_primeira_linha">{{ registo.data_servidor|date:"d M Y" }} {{ registo.data_servidor|time:"H:i" }}</td>                    
                 <td class="td_primeira_linha">{{registo.local_atual_caixa}}</td>
-                <td class="td_primeira_linha">{{registo.nome_atual_cartao}}</td>
+                <td rowspan = "2" class ="border_bottom">{{registo.codigo_hexa_cartao}}</td>
             </tr>
 
             <tr>
                 <td class ="border_bottom" style="font-size:smaller; ">{{ registo.data_caixa|date:"d M Y" }} {{ registo.data_caixa|time:"H:i" }}</td>
                 <td class ="border_bottom" style="font-size:smaller; ">{{registo.caixa_id}}</td>  
-                <td class ="border_bottom" style="font-size:smaller; ">{{registo.cartao}}</td>
             </tr>
             {% endfor %}
         </tbody>

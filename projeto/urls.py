@@ -26,20 +26,20 @@ urlpatterns = [
     path('login/', login_view, name ="login"),    
     path('associar/cartoes_pessoas', associar_pessoa_cartao_view, name="associar_pessoa_cartao"),
     
-    path('locais/adicionar', locais_view, name ="locais"),
-    path('locais/editar/<int:id>',local_editar_view, name ="locais_editar"),
+    path('locais/adicionar', adicionar_local_view, name ="adicionar_locais"),
+    path('locais/editar/<int:id>',editar_local_view, name ="locais_editar"),
     path('locais/<int:id>',local_details_view, name="local_details"),
 
-    path('pessoas/adicionar', pessoas_view, name ="pessoas"),
+    path('pessoas/adicionar', adicionar_pessoas_view, name ="pessoas"),
     path('pessoas/detalhes/<int:id>',pessoa_details_view, name = "pessoa_detalhes"),
     
     path('registos/', registos_view, name ="registos"),
-    path('cartoes/adicionar', adicionar_cartao, name ="cartoes"),
+    path('cartoes/adicionar', adicionar_cartao_view, name ="cartoes_adicionar"),
     path('cartoes/detalhes/<int:id>', cartoes_details_view, name ="cartoes_detalhes"),
-    path('cartoes/editar/<int:id>', cartoes_editar_view, name ="cartoes_editar"),
-    path('pessoas/editar/<int:id>', pessoas_editar_view, name ="pessoas_editar"),    
+    path('cartoes/editar/<int:id>', editar_cartao_view, name ="cartoes_editar"),
+    path('pessoas/editar/<int:id>', editar_pessoas_view, name ="pessoas_editar"),    
     
-    
+    path('teste', teste_edf_view, name="teste"),
     
     path('pessoas/lista',lista_pessoas_view,name ="lista_pessoas"),
     path('cartoes/lista',lista_cartoes_view,name ="lista_cartoes"),
@@ -50,10 +50,10 @@ urlpatterns = [
     path('caixas/detalhes/<int:id>', caixa_details_view,name="caixa_detalhes"),
     path('caixas/inativas',caixas_inativas, name = "caixas_inativas"),    
     path('caixas/adicionar',adicionar_caixa_view, name = "adicionar_caixa"),
-    path('caixas/editar/<int:id>',caixas_editar_view, name ="caixas_editar"),
+    path('caixas/editar/<int:id>',editar_caixa_view, name ="caixas_editar"),
     path('caixas/<int:id_local>', caixas_view_ids,  name= "caixas_ids"),
     path('caixas/', caixas_view, name ="caixas"),
-    path('caixas/associar', caixas_associar_local, name ="associar_caixas_local"),
+    path('caixas/associar', associar_caixa_local_view, name ="associar_caixas_local"),
     path('ativar_caixa/<int:caixa_id>',ativar_caixa,name ="ativar_caixa"),
     path('desativar_caixa/<int:caixa_id>',desativar_caixa,name ="desativar_caixa"),
 
@@ -68,6 +68,6 @@ urlpatterns = [
     path('edificios/historico/', historico_edf_view, name = "edf_historico" ),
     path('edificios/historico/<int:id>', historico_edf_id_view, name = "edf_historico_id" ),
     path('edificios/<int:id>', edificio_details_view, name = "edf_details"),    
-    path('edificios/adicionar',adicionar_edf,name="adicionar_edf"),
-    path('edificios/editar/<int:id>',editar_edf,name="editar_edf"),
+    path('edificios/adicionar',adicionar_edificio_view,name="adicionar_edf"),
+    path('edificios/editar/<int:id>',editar_edificio_view,name="editar_edf"),
 ]

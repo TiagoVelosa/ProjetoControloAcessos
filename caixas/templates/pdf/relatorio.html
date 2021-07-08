@@ -3,16 +3,27 @@
 <html>
     <head>
         <title>Title</title>
-        <style type="text/css">
+        <style type="text/css">            
             body {
                 font-size: 14px;
             }
-            .header {
-                font-size: 20px;
+            .cabecalho{
+                text-align: center;
+            }
+            .footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: red;
+                color: white;
+                text-align: center;
+            }
+            .titulo{
+                font-size: 24px;
                 font-weight: 100;
                 text-align: center;
-                color: #007cae;
-            }
+            }            
             .title {
                 font-size: 22px;
                 font-weight: 100;
@@ -23,7 +34,7 @@
                 color: #007cae;
             }
             .detalhes {
-                text-align: left;
+                text-align: right;
             }
             .hrItem {
                 border: none;
@@ -48,19 +59,24 @@
         </style>
     </head>
     <body>
+        <div class ="titulo">
+            <p>Relatório de registos</p>
+        </div>
+        <div class = "conteudo"></div>
         
-            <div >                    
+        
+            <div>                    
                 <p class="p_detalhes">Nome: João</p>
                 <p class="p_detalhes">Edificio: Universidade</p>
             </div>
             <div >
-                <p class="p_detalhes">De 24-12-2000 até 26-12-200 </p>
-                <p class="p_detalhes">Número de registos: 53</p>
+                <p class="p_detalhes"> De <b>{{first_date|date:"d M Y"}} {{ first_date|time:"H:i" }}</b>  até <b> {{last_date|date:"d M Y"}} {{ last_date|time:"H:i" }}</b>  </p>
+                <p class="p_detalhes">Número de registos: <b>{{num_registos}}</b></p>
             </div>
-        
         </div>
 
     <div>
+        
 
         <table  width="100%" cellspacing="0" >
             <thead >
@@ -68,27 +84,25 @@
                     <th rowspan = "2" class ="border_bottom">Registo</th>                
                     <th>Data Caixa</th>
                     <th>Local</th>
-                    <th>Pessoa</th>                
+                    <th rowspan = "2" class ="border_bottom">Cartão</th>                
                 </tr>
                 <tr>
                     <td class ="border_bottom">Data Servidor</td>
                     <td class ="border_bottom">ID Caixa</td>
-                    <td class ="border_bottom">Cartão</td>
                 </tr>
             </thead>
             <tbody>
                 {% for registo in registos%}
                 <tr>
-                    <th rowspan = "2" class ="border_bottom">{{registo.id}}</td>
+                    <td rowspan = "2" class ="border_bottom">{{registo.id}}</td>
                     <td class="td_primeira_linha">{{ registo.data_servidor|date:"d M Y" }} {{ registo.data_servidor|time:"H:i" }}</td>                    
                     <td class="td_primeira_linha">{{registo.local_atual_caixa}}</td>
-                    <td class="td_primeira_linha">{{registo.nome_atual_cartao}}</td>
+                    <td rowspan = "2" class ="border_bottom">{{registo.codigo_hexa_cartao}}</td>
                 </tr>
     
                 <tr>
                     <td class ="border_bottom" style="font-size:smaller; ">{{ registo.data_caixa|date:"d M Y" }} {{ registo.data_caixa|time:"H:i" }}</td>
                     <td class ="border_bottom" style="font-size:smaller; ">{{registo.caixa_id}}</td>  
-                    <td class ="border_bottom" style="font-size:smaller; ">{{registo.cartao}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

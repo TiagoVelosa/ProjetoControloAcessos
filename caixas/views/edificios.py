@@ -1,3 +1,4 @@
+from caixas.database_queries import *
 from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
@@ -89,34 +90,52 @@ def historico_edf_view(request):
     print(context)
     return render(request, 'historico_edf.html', context)
 
-def adicionar_edf(request): 
+def teste_edf_view(request):
+    context = {}
+    context["edificios"] = edificios_associados_gestor(request)
+    return render(request, 'teste.html', context)
+def adicionar_edificio_view(request): 
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)    
-    form_edf = EdificioForm()
-    context["form"] = form_edf
     if request.POST:
         form_edf = EdificioForm(request.POST)
         if form_edf.is_valid():            
             form_edf.save(gestor_name,"criar")
             messages.success(request, "Edificio criado com sucesso! ") 
-            return HttpResponseRedirect('/edificio/adicionar') 
-    return render(request,"adicionar_edf.html",context)
+            return HttpResponseRedirect('/edificios/adicionar')
+    else:
+        form_edf = EdificioForm(None)
 
-def editar_edf(request, id): 
-    context = {}
-    try:
-        edf = Edificio.objects.get(id=id)
-    except Edificio.DoesNotExist:
-        context['erro_nao_existe'] = "ERRO - Edf não encontrado!"
+    context['form'] = form_edf
+    context['titulo'] = "Edificio"
+    context['header'] = "Adicionar Edificio"
+    context['button'] = "Adicionar Edificio"
+    return render(request, "adicionar_editar.html",context)
+
+
+
+def editar_edificio_view(request,id):
     user = request.user
-    gestor_name = str(user.first_name + " " + user.last_name)    
-    form_edf = EdificioForm(instance=edf)
-    context["form"] = form_edf
-    if request.POST:
-        form_edf = EdificioForm(request.POST, instance=edf)
-        if form_edf.is_valid():            
-            form_edf.save(gestor_name,"editar")
-            messages.success(request, "Edificio editado com sucesso! ") 
-            return HttpResponseRedirect('/edificio/adicionar') 
-    return render(request,"editar_edf.html",context)
+    gestor_name = str(user.first_name + " " + user.last_name)
+    context = {}
+    if Edificio.objects.filter(id=id):
+        edf = Edificio.objects.get(id=id)
+    else:
+        messages.error(request,"Edifício não encontrado!")
+        return render(request,"erro.html",context)   
+    
+    if request.POST:        
+        form = EdificioForm(request.POST,instance=edf)
+        if form.is_valid():
+            form.save(gestor_name,"editar")
+            messages.success(request, "Edifício editado com sucesso! ")
+            return HttpResponseRedirect("/edificios/adicionar")
+    else:
+        form = EdificioForm(instance=edf)
+    
+    context['form']=form
+    context['titulo'] = "Edificio"
+    context['header'] = "Editar Edificio"
+    context['button'] = "Editar Edificio"
+    return render(request,'adicionar_editar.html',context)

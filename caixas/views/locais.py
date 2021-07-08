@@ -1,3 +1,4 @@
+from caixas.database_queries import *
 from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
@@ -15,29 +16,33 @@ def local_details_view(request,id):
     context["caixas"] = caixas_local
     return render(request,"local_details.html",context)
 
-def local_editar_view(request,id):
-    context = {}
+def editar_local_view(request,id):
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)
-    try:
+    context = {}
+    if Local.objects.filter(id=id):
         local = Local.objects.get(id=id)
-    except Local.DoesNotExist:
-        context['erro_nao_existe'] = "ERRO - Local não encontrado!"
-    form_local = LocalForm(instance=local)
+    else:
+        messages.error(request,"Local não encontrado!")
+        return render(request,"erro.html",context)   
     
     if request.POST:        
-        form_local = LocalForm(request.POST,instance=local)
-        if form_local.is_valid():           
-            form_local.save(gestor_name,"editar")
-            messages.success(request, "Local editado com sucesso! ") 
-            return HttpResponseRedirect('/locais/adicionar') 
+        form = LocalForm(request.POST,instance=local)
+        if form.is_valid():
+            form.save(gestor_name,"editar")
+            messages.success(request, "Local editado com sucesso! ")
+            return HttpResponseRedirect("/locais/adicionar")
+    else:
+        form = LocalForm(instance=local)
     
-    
-    context['locais_form']=form_local
-    return render(request,'locais_editar.html',context)
+    context['form']=form
+    context['titulo'] = "Local"
+    context['header'] = "Editar Local"
+    context['button'] = "Editar Local"
+    return render(request,'adicionar_editar.html',context)
 
-
-def locais_view(request):     
+def adicionar_local_view(request):
+    edificios_associados_gestor(request)
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)
@@ -49,5 +54,9 @@ def locais_view(request):
             return HttpResponseRedirect('/locais/adicionar') 
     else:        
         form = LocalForm()
-    context['locais_form'] = form
-    return render(request, "locais.html",context)
+
+    context['form'] = form
+    context['titulo'] = "Locais"
+    context['header'] = "Adicionar Local"
+    context['button'] = "Adicionar Local"
+    return render(request, "adicionar_editar.html",context)
