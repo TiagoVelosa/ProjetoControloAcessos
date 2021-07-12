@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth import authenticate
 
 from users.models import Gestor
@@ -8,15 +8,13 @@ from users.models import Gestor
 
 class FormRegisto(UserCreationForm):
     email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
-    
-
     class Meta:
         model = Gestor
         fields = ("email","first_name","last_name", "password1", "password2")
 
 class GestorAuthenticationForm(forms.ModelForm):
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
-
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'placeholder': 'Password','style': 'width:50%; border-radius: 5px;font-size: larger; '}))
+    email = forms.EmailField(max_length=60, widget=forms.TextInput(attrs={'placeholder':'Email','style': 'width: 50%; border-radius: 5px; font-size: larger; '}))
     class Meta:
         model = Gestor
         fields = ("email", "password")

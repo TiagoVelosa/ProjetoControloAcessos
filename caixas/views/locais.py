@@ -42,18 +42,17 @@ def editar_local_view(request,id):
     return render(request,'adicionar_editar.html',context)
 
 def adicionar_local_view(request):
-    edificios_associados_gestor(request)
     context = {}
     user = request.user
     gestor_name = str(user.first_name + " " + user.last_name)
     if request.POST:        
-        form = LocalForm(request.POST)
+        form = LocalForm(request,request.POST)
         if form.is_valid():
             form.save(gestor_name,"criar")
             messages.success(request, "Local adicionado com sucesso! ") 
             return HttpResponseRedirect('/locais/adicionar') 
     else:        
-        form = LocalForm()
+        form = LocalForm(request)
 
     context['form'] = form
     context['titulo'] = "Locais"

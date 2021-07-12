@@ -1,31 +1,81 @@
-<h2>Login</h2>
-<form method ="post">
-    {% csrf_token %}
-    {% if dados_invalidos %}
-        <div style = "color: red;">
-            <p>{{dados_invalidos}}</p>
-        </div>
-    {% endif %}
-    {% for field in login_form %}
-        <p>
-            {{field.label_tag}}
-            {{field}}
 
-            {% if field.help_text %}
-                <small style= "color: grey;">{{field.help_text}}</small>
-            {% endif %}
-            {% for error in field.erros %}
-                <p style="color: red;">{{field.help_text}}</p>
-            {% endfor %}                        
-        </p>
-    {% endfor %}
+<style>
+    .botao {
+      background-color: rgb(67, 68, 70); /* Green */
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.4s;
+      cursor: pointer;
+    }
+    .botao {
+    margin-top: 5px;
+    background-color: white; 
+    color: black; 
+    border: 2px solid white;
+    border-radius: 20px;    
+    }
 
-    {% if login_form.non_field_errors %}
-                <div style = "color: red;">
-                    <p>{{login_form.non_field_errors}}</p>
-                </div>
-            {% endif %}
+    .botao:hover {
+    background-color: rgb(67, 68, 70);
+    color: white;
+    }
+</style>
+<head>
+    <title>Controlo de Acessos - UMa</title>
+</head>
+<body style="background-color : rgb(216, 215, 215); justify-content: center; align-content: center;">
+    <div style="display: flex; justify-content: center; margin-top: 50px;">
+        <div style="background-color: rgb(33, 37, 41); width: 500px;  border-radius: 20px; box-shadow: 10px 10px 10px 10px grey; justify-content: center;">
+            <div style="display: flex; align-items: center; flex-direction :column; margin-bottom: 0px; margin-top: 10px; ">
+                <img src="https://infoalunos.uma.pt/hydra/img/logo_uma_branco.png" style="width: 210px; height: 70px;">
+            </div>            
+            <p style="color: rgb(255, 255, 255); opacity: 100%; text-align: center; font-size: xx-large; margin-top: 1px; margin-bottom: 5px;">Controlo de acessos</p>
+            <div style="background-color: white; height: 1px; margin-left: 5%; margin-right: 5%; margin-top: 0px;" > </div>
+            <form method ="post" style=" text-align: center; ">
+                {% csrf_token %}
+                {% if dados_invalidos %}
+                    <div style = "color: red; ">
+                        <p>{{dados_invalidos}}</p>
+                    </div>
+                {% endif %}
+                {% for field in login_form %}
+                    
+                    <p style="margin-top: 40px; margin-bottom: 40px;">                  
+                        {{field}}
+                    </p>
+                    <p>        
+                        {% if field.help_text %}
+                            <small style= "color: grey;">{{field.help_text}}</small>
+                        {% endif %}                                          
+                    </p>
+                {% endfor %}
     
-    <button type = "submit">Submit</button>
+                <button type = "submit" class = "botao botao1" >Login</button>
+    
+                {% if login_form.non_field_errors %}
+                    <div style = "color: red;">
+                        <p>{{login_form.non_field_errors}}</p>
+                    </div>
+                {% endif %}
+            
+            </form>
+                {% if messages %}
+                    <div class="alert alert-success alert-dismissible">
+                    {% for message in messages %}
+                    <p style="color: white; text-align: center;">{{ message }}</p>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+        
+        
+        </div>
+        
+    </div>
+</body>
 
-</form>

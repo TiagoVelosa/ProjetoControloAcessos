@@ -13,10 +13,10 @@ def home_page_view(request):
     labels1 = []
     data1 = []
 
-    num_caixas_inativas = Caixa.objects.filter(ativo= False).count()
+    num_caixas_inativas = Caixa.objects.filter(utilizavel= False).count()
     data1.append(num_caixas_inativas)
     labels1.append("Caixas Inativas")
-    num_caixas_ativas = Caixa.objects.filter(ativo= True).count()
+    num_caixas_ativas = Caixa.objects.filter(utilizavel= True).count()
     data1.append(num_caixas_ativas)
     labels1.append("Caixas Ativas")
     

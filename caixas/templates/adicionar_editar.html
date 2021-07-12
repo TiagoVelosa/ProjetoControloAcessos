@@ -24,12 +24,12 @@
     {% endfor %}
 
     {% if form.non_field_errors %}
-                <div style = "color: red;">
-                    <p>{{form.non_field_errors}}</p>
-                </div>
-            {% endif %}
+        <div style = "color: red;">
+            <p>{{form.non_field_errors}}</p>
+        </div>
+    {% endif %}
     
-            <button type = "submit">{{button}}</button>
+    <button type = "submit">{{button}}</button>
 
 </form>
 {% if messages %}

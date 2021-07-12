@@ -24,7 +24,8 @@
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{request.user.first_name}} {{request.user.last_name}}<i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">   
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="{% url 'alterar_dados_pessoais' %}">Alterar Dados Pessoais</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
                 </div>
             </li>
@@ -158,9 +159,7 @@
             <main>
                 <div class="container-fluid">
                     {% block content %}
-                    {% endblock  %}
-                    
-                    
+                    {% endblock  %}                                       
                 </div>
             </main>
         </div>
@@ -187,15 +186,18 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         <title>Acesso negado!</title>
     </head>
-    <body>
-        <figure class="text-center">
-            <blockquote class="blockquote">                
-                <h1 class="display-3">Acesso negado!</h1>                
-            </blockquote>
-            <blockquote class="blockquote">
-                <p>Caso possua uma conta, faça  <a href = "{% url 'login' %}">LogIn</a> primeiro!</p>
-            </blockquote>
-            
-        </figure>
+    <body style="background-color : rgb(216, 215, 215); justify-content: center; align-content: center;">
+        <div style="display: flex; justify-content: center; margin-top: 50px;">
+            <div style="background-color: rgb(33, 37, 41); width: 500px;  border-radius: 20px; box-shadow: 10px 10px 10px 10px grey; justify-content: center;">
+                <div style="display: flex; align-items: center; flex-direction :column; margin-bottom: 0px; margin-top: 10px; ">
+                    <img src="https://infoalunos.uma.pt/hydra/img/logo_uma_branco.png" style="width: 210px; height: 70px;">
+                    <p style="color: rgb(255, 255, 255); opacity: 100%; text-align: center; font-size: xx-large; margin-top: 1px; margin-bottom: 5px;">Controlo de acessos</p>
+                    <div style="background-color: rgb(255, 255, 255); height: 1px; width: 80%; margin-left: 5%; margin-right: 5%; margin-top: 0px;"></div>
+                    <p style="color:white; font-size: x-large;">Acesso Negado</p>
+                    <p style="color:white">Caso possua uma conta, faça  <a href = "{% url 'login' %}">Login</a> primeiro!</p>
+                </div> 
+            </div>
+        </div>
+        
     </body>
 {% endif %}

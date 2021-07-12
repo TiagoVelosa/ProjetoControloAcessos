@@ -1,25 +1,45 @@
 
+from django.forms.widgets import Widget
 from caixas.database_queries import *
 from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import fields, widgets
-from django.http import request
-from django.shortcuts import redirect
 from caixas.models import Edificio,Local,Pessoa,Cartao, Pessoa_Cartao, Caixa, Caixa_Local, Rel_Gestor_Edificio
 from users.models import Gestor
-from caixas.widgets import PickerInput
 from .validation import *
 import datetime
 
-
-class FormAdicionarGestor(forms.ModelForm): 
+class FormAlterarDadosGestor(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
     last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
-    email = forms.EmailField(max_length=60,help_text="Obrigatório! Insira um endereço de email válido!")
+    password = forms.CharField(widget=forms.PasswordInput)
+    confirmar_password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model= Gestor
+        fields = ("first_name","last_name", "password","confirmar_password")
+    
+    def clean(self):
+        cleaned_data = super(FormAlterarDadosGestor,self).clean()
+        password = cleaned_data["password"]
+        confirmar_password = cleaned_data["confirmar_password"]
+        first_name = cleaned_data["first_name"]
+        last_name = cleaned_data["last_name"]
+        verifica_nome(first_name)
+        verifica_nome(last_name)
+        if(password != confirmar_password):
+            raise forms.ValidationError("A palavra passse e a confirmção")
+        
+    def save(self):
+        data = self.cleaned_data
+        gestor = self.instance
+        gestor.set_password(data["password"])
+        gestor.save()
+
+class FormAdicionarGestor(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
+    first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
+    last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
+    email = forms.EmailField(max_length=60)
     password = forms.CharField(widget=forms.PasswordInput)
     is_supergestor = forms.BooleanField(required=False, initial=False, label = "Supergestor")
-    
-    
     class Meta:
         model= Gestor
         fields = ("email","first_name","last_name", "password")
@@ -27,18 +47,12 @@ class FormAdicionarGestor(forms.ModelForm):
     def clean(self):
         cleaned_data= super(FormAdicionarGestor,self).clean()
         email = cleaned_data["email"]
+        first_name = cleaned_data["first_name"]
+        last_name = cleaned_data["last_name"]
+        verifica_nome(first_name)
+        verifica_nome(last_name)
         if(Gestor.objects.filter(email = email)):
-            raise forms.ValidationError("Já existe um gestor com esse email!")
-
-class FormEditarGestor(forms.ModelForm):
-    first_name = forms.CharField(max_length=15, label = "Primeiro Nome")
-    last_name = forms.CharField(max_length=15, label = "Ultimo Nome")
-    is_supergestor = forms.BooleanField(required=False, initial=False, label = "Supergestor")
-
-    class Meta:
-        model= Gestor
-        fields = ("first_name","last_name")
-    
+            raise forms.ValidationError("Já existe um gestor com esse email!")   
 
 class EdificioForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     nome = forms.CharField(label="Nome", max_length=20)
@@ -65,19 +79,20 @@ class EdificioForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TE
             edf.data_modificado=None
         edf.save()
 
-
-
-
-class DateInput(forms.DateInput):
+class DateInput(forms.DateInput): 
     input_type='date'
 
 class LocalForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
     nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Local', 'style': 'width: 50%; height: 30px;'}))
     descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Local', 'style': 'width: 50%; height: 30px;'}),required=False)
-    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",widget=forms.Select(attrs={'style': 'width: 50%; height: 30px;'}))
+    edificio = forms.ModelChoiceField(queryset=None,empty_label="Selecione o Edificio")
 
     data_inicio = forms.DateTimeField(widget=DateInput())
     data_fim = forms.DateTimeField(widget=DateInput(), required=False)   
+
+    def __init__(self,request,*args, **kwargs):
+        super(LocalForm, self).__init__(*args, **kwargs)
+        self.fields['edificio'].queryset = query_set_edificios_associados_gestor(request)
 
     class Meta:
         model = Local
@@ -177,7 +192,7 @@ class CartaoForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TEST
 
 
 
-class Form_Cartao_Pessoa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar)
+class Form_Cartao_Pessoa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar) / TESTADA (ADICIONAR)
     cartao = forms.ModelChoiceField(queryset=Cartao.objects.all(),empty_label="Selecione o Cartão",initial=0)
     pessoa = forms.ModelChoiceField(queryset=Pessoa.objects.all(),empty_label="Selecione a Pessoa",initial=0)
     data_inicio = forms.DateTimeField(widget=DateInput())
@@ -215,7 +230,7 @@ class Form_Cartao_Pessoa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar)
             pessoa_cartao.save()
 
 
-class Form_Caixa_Local(forms.ModelForm): 
+class Form_Caixa_Local(forms.ModelForm): #VALIDAÇÃO FEITA (ADICIONAR) / TESTADA (ADICIONAR) 
     local = forms.ModelChoiceField(queryset=None,empty_label="Selecione o local")
     caixa = forms.ModelChoiceField(queryset=Caixa.objects.all(),empty_label="Selecione a caixa")
     data_inicio = forms.DateTimeField(widget=DateInput())
@@ -285,17 +300,15 @@ class Form_Caixa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TEST
             caixa.data_modificado=None
         caixa.save()
 
+class Form_Edf_Gestor(forms.ModelForm): # VALIDAÇÃO FEITA (ADICIONAR) / TESTADA (ADICIONAR)
     
-
-class Form_Edf_Gestor(forms.ModelForm): 
+    gestor = forms.ModelChoiceField(queryset=Gestor.objects.filter(is_supergestor = False),empty_label="Selecione o Gestor")
+    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio")
     data_inicio = forms.DateTimeField(widget=DateInput())
     data_fim = forms.DateTimeField(widget=DateInput())
-    gestor = forms.ModelChoiceField(queryset=Gestor.objects.all(),empty_label="Selecione o Gestor",initial=0)
-    edificio = forms.ModelChoiceField(queryset=Edificio.objects.all(),empty_label="Selecione o Edficicio",initial=0)
-
     class Meta:
         model = Rel_Gestor_Edificio
-        fields = ('data_inicio',"data_fim","gestor","edificio")
+        fields = ("gestor","edificio",'data_inicio',"data_fim")
 
     def clean(self):
         cleaned_data = super(Form_Edf_Gestor, self).clean()
@@ -308,18 +321,15 @@ class Form_Edf_Gestor(forms.ModelForm):
         data_fim = cleaned_data['data_fim']
         if(Rel_Gestor_Edificio.objects.filter(data_inicio=data_inicio, gestor=gestor, edificio = edificio, data_fim=data_fim).exists()):
             raise forms.ValidationError("Já existe uma relação com esses dados")
-        if(data_fim != None):
-            if(data_inicio>data_fim):
-                raise forms.ValidationError("A data final não pode ser anterior à inicial")    
-        return cleaned_data
+        verifica_data(data_inicio,data_fim)
+        verifica_gestor_associado_edificio(gestor.id,edificio.id,data_inicio,data_fim)
     
     def save(self,user,tipo):
         data = self.cleaned_data        
         if tipo=="editar":
             rel = self.instance
             rel.modificado_por= user
-            rel.data_modificado=datetime.date.today()
-            
+            rel.data_modificado=datetime.date.today()            
         else:
             rel = Rel_Gestor_Edificio(data_inicio=data["data_inicio"],data_fim=data["data_fim"],gestor=data["gestor"],edificio=data["edificio"])
             rel.criado_por= user

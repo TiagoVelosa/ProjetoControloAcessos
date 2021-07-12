@@ -12,20 +12,23 @@ def historico_rel_edf_gestores(request):
 
     return render(request,"rel_edf_gestor/historico_rel_edf_gestores.html",context)
 
-def gestores_associar_edf_view(request):
+
+
+def associar_gestor_edificio_view(request): 
     context = {}
     user = request.user
-    gestor_name = str(user.first_name + " " + user.last_name)
+    gestor_name = str(user.first_name + " " + user.last_name)    
     if request.POST:
         form = Form_Edf_Gestor(request.POST)
-        if form.is_valid():
+        if form.is_valid():            
             form.save(gestor_name,"criar")
             messages.success(request, "Gestor associado com sucesso! ") 
             return HttpResponseRedirect('/gestores/associar') 
-
     else:
-        form = Form_Edf_Gestor()
-    
-    context["form_rel"] = form
+        form = Form_Edf_Gestor(None)
 
-    return render(request,"rel_edf_gestor/associar_gestor_edf.html",context)
+    context['form'] = form
+    context['titulo'] = "Gestor"
+    context['header'] = "Associar gestor"
+    context['button'] = "Associar gestor"
+    return render(request, "adicionar_editar.html",context)

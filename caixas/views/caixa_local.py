@@ -14,7 +14,6 @@ def associar_caixa_local_view(request):
             messages.success(request, "Caixa associada com sucesso! ") 
             return HttpResponseRedirect('/caixas/associar')
     else:
-        print(1)
         form = Form_Caixa_Local(request)
 
     context['form'] = form

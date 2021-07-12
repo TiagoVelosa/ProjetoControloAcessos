@@ -59,9 +59,9 @@ urlpatterns = [
 
     path('gestores/adicionar', gestores_adicionar_view, name ="gestores_adicionar"),
     path('gestores/lista', gestores_lista, name ="gestores_lista"),
-    path('gestores/associar', gestores_associar_edf_view, name="gestores_associar_edf"),
-    path('gestores/editar/<int:id>', gestores_editar_view,name = "gestores_editar"),
+    path('gestores/associar', associar_gestor_edificio_view, name="gestores_associar_edf"),
     path('gestores/detalhes/<int:id>',gestores_details_view,name="gestor_detalhes"),
+    path('gestores/alterar_dados_pessoais/',gestores_editar_pessoais_view,name ="alterar_dados_pessoais"),
 
     path('edificios/', edf_geral_view, name ="edificios"),
     path('edificios/lista/', edf_lista_view, name="lista_edf"),

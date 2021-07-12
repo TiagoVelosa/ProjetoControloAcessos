@@ -1,5 +1,6 @@
+from users.models import Gestor
 from django.core.exceptions import ValidationError
-from caixas.models import Caixa_Local, Cartao, Local, Pessoa,Pessoa_Cartao,Caixa
+from caixas.models import Caixa_Local, Cartao, Edificio, Local, Pessoa,Pessoa_Cartao,Caixa, Rel_Gestor_Edificio
 import datetime
 from django import forms
 import pytz
@@ -28,7 +29,7 @@ def verifica_mac_address(mac_address):
 def verifica_nome(nome):
     if nome.isalpha():
         return
-    else:
+    else:        
         raise forms.ValidationError('ERRO: %s possui caracteres inválidos!' % nome)
     
 def verifica_numero_telemovel(numero):
@@ -107,4 +108,21 @@ def verifica_data_caixa_local(local_id,data_inicio_caixa,data_fim_caixa):
         return
     else:
         raise forms.ValidationError("ERRO: A caixa só pode ser associado dentro do intervalo de tempo do local!")
-    
+
+def verifica_gestor_associado_edificio(gestor_id,edificio_id,data_inicio,data_fim):
+    if Gestor.objects.filter(id=gestor_id):
+        gestor = Gestor.objects.get(id=gestor_id)
+    else:
+        raise forms.ValidationError("ERRO: O gestor selecionado não foi encontrado!")
+
+    if Edificio.objects.filter(id=edificio_id):
+        edificio = Edificio.objects.get(id=edificio_id)
+    else:
+        raise forms.ValidationError("ERRO: O edificio selecionado não foi encontrado!")
+
+    bool1 =Rel_Gestor_Edificio.objects.filter(gestor_id = gestor_id).filter(edificio_id = edificio_id).filter(data_inicio__lte = data_fim, data_fim__gte = data_fim)
+    bool2 =Rel_Gestor_Edificio.objects.filter(gestor_id = gestor_id).filter(edificio_id = edificio_id).filter(data_inicio__lte = data_inicio, data_fim__gte = data_inicio)
+    if bool1 or bool2:
+        raise forms.ValidationError("ERRO: O gestor já está associado a esse edifício nesse intervalo de tempo!")
+    else:
+        return

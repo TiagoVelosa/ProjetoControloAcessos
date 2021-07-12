@@ -50,7 +50,7 @@ def edf_geral_view(request):
         context["lista_edfs"] = edificios
         context["relacoes"] = relacoes
     else:    
-        relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL);',[current_user.id])
+        relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL) and (data_inicio < now());',[current_user.id])
         for rel in relacoes:
             gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [rel.edificio_id])
             edificio = Edificio.objects.get(id = rel.edificio_id)
@@ -92,7 +92,7 @@ def historico_edf_view(request):
 
 def teste_edf_view(request):
     context = {}
-    context["edificios"] = edificios_associados_gestor(request)
+    context["edificios"] = query_set_edificios_associados_gestor(request)
     return render(request, 'teste.html', context)
 def adicionar_edificio_view(request): 
     context = {}

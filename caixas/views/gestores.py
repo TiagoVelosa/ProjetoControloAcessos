@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from caixas.models import Gestor, Rel_Gestor_Edificio
-from caixas.forms import FormAdicionarGestor, FormEditarGestor
+from caixas.forms import FormAdicionarGestor, FormAlterarDadosGestor
 
 #Completo
 
@@ -18,6 +18,32 @@ def gestores_details_view(request, id):
     context["relacoes"] = relacoes
 
     return render(request,"gestores_details.html",context)
+
+def gestores_editar_pessoais_view(request):
+    context= {}
+    user = request.user
+    gestor_name = str(user.first_name + " " + user.last_name)
+    context = {}
+    if Gestor.objects.filter(id=user.id):
+        gestor = Gestor.objects.get(id=user.id)
+    else:
+        messages.error(request,"Local não encontrado!")
+        return render(request,"erro.html",context)   
+    
+    if request.POST:        
+        form = FormAlterarDadosGestor(request.POST,instance=gestor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Dados alterados com sucesso!")
+            return HttpResponseRedirect("/login")
+    else:
+        form = FormAlterarDadosGestor(instance=gestor)    
+    context["form"] = form
+    context['titulo'] = "Editar Dados Pessoais"
+    context['header'] = "Editar Dados Pessoais"
+    context['button'] = "Editar Dados Pessoais"
+    return render(request, "adicionar_editar.html",context)
+
 
 
 def gestores_adicionar_view(request): 
@@ -48,22 +74,3 @@ def gestores_lista(request):
     context["gestores"] = gestores
     return render(request,'gestores_lista.html',context )
 
-def gestores_editar_view(request,id):
-    context = {}
-    user = request.user    
-    try:
-        gestor = Gestor.objects.get(id=id)
-    except Gestor.DoesNotExist:
-        messages.ERROR(request,"Erro gestor não existe")
-    form_gestor = FormEditarGestor(instance=gestor)
-    
-    if request.POST:        
-        form_gestor = FormEditarGestor(request.POST,instance=gestor)
-        if form_gestor.is_valid():           
-            form_gestor.save()
-            messages.success(request, "Gestor editado com sucesso! ") 
-            return HttpResponseRedirect('/locais/adicionar') 
-    
-    
-    context['form_gestor']=form_gestor    
-    return render(request,"gestores_editar.html",context)
