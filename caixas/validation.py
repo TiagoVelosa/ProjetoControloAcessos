@@ -59,8 +59,8 @@ def verifica_cartao_no_uso(id,data_inicio,data_fim):
     else:
         raise forms.ValidationError("ERRO: O cartão selecionado não foi encontrado!")
     
-    bool1 =Pessoa_Cartao.objects.filter(data_inicio__lt = data_inicio, data_fim__gt = data_inicio, cartao_id = id)
-    bool2 =Pessoa_Cartao.objects.filter(data_inicio__lt = data_fim, data_fim__gt = data_fim, cartao_id = id)
+    bool1 =Pessoa_Cartao.objects.filter(data_inicio__lte = data_inicio, data_fim__gte = data_inicio, cartao_id = id)
+    bool2 =Pessoa_Cartao.objects.filter(data_inicio__lte = data_fim, data_fim__gte = data_fim, cartao_id = id)
     if(bool1 or bool2):
         raise forms.ValidationError("ERRO: O cartão já está associado nesse intervalo de tempo!")
     else:
