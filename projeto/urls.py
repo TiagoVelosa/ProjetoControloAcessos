@@ -43,7 +43,7 @@ urlpatterns = [
     
     path('pessoas/lista',lista_pessoas_view,name ="lista_pessoas"),
     path('cartoes/lista',lista_cartoes_view,name ="lista_cartoes"),
-    path('presencas.php',dados_caixas_view,name = "dados_caixas"),
+    path('presencas.php',valida_registo,name = "dados_caixas"),
     path('pdf',generate_pdf,name="pdf"),
     path('relacoes_edf_gestores/historico',historico_rel_edf_gestores,name="historico_rel"),
 

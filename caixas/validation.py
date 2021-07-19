@@ -4,8 +4,8 @@ from caixas.models import Caixa_Local, Cartao, Edificio, Local, Pessoa,Pessoa_Ca
 import datetime
 from django import forms
 import pytz
-from ipaddress import IPv4Address, IPv6Address, ip_address
-
+import re
+from ipaddress import ip_address
 _DATA_COMECO = datetime.datetime(2021,7,1)
 utc = pytz.UTC
 DATA_COMECO = _DATA_COMECO.replace(tzinfo=utc)
@@ -19,11 +19,17 @@ def verifica_data(data_inicio,data_fim):
                 raise forms.ValidationError("ERRO: Data inicial maior que a data final!")    
     return
 
-def verifica_mac_address(mac_address):    
+def verifica_ip_address(ip_address):
     try:
-        ip_address(mac_address)
+        ip_address(ip_address)
         return       
     except:
+        raise forms.ValidationError("ERRO: IP no formato incorreto!")
+
+def verifica_mac_address(mac_address):
+    if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac_address.lower()):
+        return       
+    else:
         raise forms.ValidationError("ERRO: MAC Address no formato incorreto!")
 
 def verifica_nome(nome):

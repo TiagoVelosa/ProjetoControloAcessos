@@ -14,7 +14,6 @@ Gestores
                 <th>Nome</th>                
                 <th>Email</th>
                 <th>Super Gestor</th>
-                <th>Editar</th>      
             </tr>
         </thead>
 
@@ -24,8 +23,7 @@ Gestores
                     <td><a href="{% url 'gestor_detalhes' gestor.id %}">{{gestor}}</a></td>
                     <td>{{gestor.email}}</td>
                     <td>{{gestor.is_supergestor}}</td>
-                    <th><a href="{% url 'gestores_editar' gestor.id %}">[Editar]</a></th>
-                </tr>
+                </tr>   
             {% endfor %}
         </tbody>
     </table>

@@ -12,27 +12,18 @@ Caixas
         <thead>
             <tr>
                 <th>Caixa</th>
-                <th>IP</th>
+                <th>Mac Address</th>
                 <th>Data criação</th>
                 <th>Data desativação</th>
                 <th>Ativar</th>
                 
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <th>Caixa</th>
-                <th>IP</th>
-                <th>Data criação</th>
-                <th>Data desativação</th>
-                <th>Ativar</th>
-            </tr>
-        </tfoot>
         <tbody>
             {% for caixa in caixas_inativas %}
                 <tr>
                     <td>{{caixa.id}}</td>
-                    <td>{{caixa.ip}}</td>
+                    <td>{{caixa.mac_address}}</td>
                     <td>{{caixa.data_criacao|date:"d M Y"}}</td>
                     {% if caixa.data_desativacao %}
                         <td>{{caixa.data_desativacao|date:"d M Y"}}</td>

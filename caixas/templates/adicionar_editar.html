@@ -10,9 +10,15 @@
 <form method ="post" > 
     {% csrf_token %}   
     {% for field in form %}
-    <p style="margin-bottom: 0;">
-        {{field.label_tag}} {{field}}
-    </p>
+    <div style="display: grid; grid-template-columns: max-content auto;">
+        <p style="margin-bottom: 0; margin-right: 20px;">
+            {{field.label_tag}} 
+        </p>
+        <p style="margin-bottom: 0;">
+            {{field}}
+        </p>
+    </div>
+    
         <p>        
             {% if field.help_text %}
                 <small style= "color: grey;">{{field.help_text}}</small>

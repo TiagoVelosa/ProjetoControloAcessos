@@ -8,27 +8,21 @@ Caixa
 <h2 class="titulo">Caixa {{caixa.id}}</h2>        
 <div class = "card mb-4"></div>
 
-
 <div class = "div_locais">    
-    <div class="details_caixas" >
-        <h4 style="margin: 1%;">IP:</h4>
-        <p class="p_texto">{{caixa.ip}}</p>
-    </div>
-    <div class="details_caixas" >
+    <div class="details" >
         <h4 style="margin: 1%;">Mac Address:</h4>
-        <p class="p_texto">{{caixa.mac_adress}}</p>
+        <p class="p_texto">{{caixa.mac_address}}</p>
     </div>
-    </div>
-    <div class = "div_locais">
-    <div class="details_caixas" >
+    <div class="details_gestores" >
         <h4 style="margin: 1%;">No uso:</h4>
-        <p class = "p_texto">{% if caixa.local_atual_id %} Sim {% else %} Não {% endif %}</p>            
+        <p class = "p_texto">{% if caixa.local_atual_id %} Sim {% else %} Não {% endif %}</p>
     </div>
-    <div class="details_caixas" >
-        <h4 style="margin: 1%;">Ativa:</h4>
-        <p class = "p_texto">{% if caixa.ativo %} Sim {% else %} Não {% endif %}</p>            
-    </div>    
+    <div class="details" >
+        <h4 style="margin: 1%;">Estado:</h4>
+        <p class = "p_texto">{% if caixa.operacional %} Operacional {% else %} Avariada {% endif %}</p>            
+    </div>   
 </div>
+
 
 
 <div>

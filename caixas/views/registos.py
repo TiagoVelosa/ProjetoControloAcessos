@@ -1,44 +1,116 @@
+from caixas.database_queries import local_caixa_ativa_por_caixa
 from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponse, HttpResponseRedirect
 from caixas.models import Edificio, Local, Pessoa_Cartao, Registo, Rel_Gestor_Edificio,Caixa,Cartao
 from ..utils import render_to_pdf 
 import datetime
+from datetime import datetime
 
+def valida_registo(request):
+    reg = Registo()
+    if(request.GET):
+        if("mac" and "ip" and "datetime" and "rfid" and "h" in request.GET):
+            caixa = Caixa.objects.filter(mac_address=request.GET["mac"])
+            if(caixa):
+                caixa = caixa[0]
+                data = datetime.strptime(request.GET["datetime"],"%Y-%m-%d %H:%M:%S").strftime("%Y%m%d%H%M%S")
+                hash_servidor = request.GET["mac"] + request.GET["ip"] + data + request.GET["rfid"] + caixa.token_seguranca
+                print("HASH \!/ \n")
+                print(hash_servidor)                
+                if ("hash_servidor" == request.GET["h"]): 
+                    reg.codigo_hexa_cartao = request.GET["rfid"]
+                    reg.data_caixa = request.GET["datetime"]
+                    reg.data_servidor = datetime.now()
+                    reg.validado = True
+                    reg.codigo_validacao = request.GET["h"]
+                    reg.criado_por = "Caixa"
+                    reg.caixa_id = caixa.id
+                    reg.local_atual_caixa = local_caixa_ativa_por_caixa(caixa.id)
+                    reg.save()
+                    return HttpResponse(status = 200)
+                else:
+                    reg.codigo_hexa_cartao = request.GET["rfid"]
+                    reg.data_caixa = request.GET["datetime"]
+                    reg.data_servidor = datetime.now()
+                    reg.validado = False
+                    reg.codigo_validacao = request.GET["h"]
+                    reg.criado_por = "ERRO"
+                    reg.caixa_id = caixa.id                    
+                    reg.local_atual_caixa = local_caixa_ativa_por_caixa(caixa.id)
+                    reg.save()
+                    return HttpResponse(status=400) 
+            else:
+                reg.codigo_hexa_cartao = request.GET["rfid"]
+                reg.data_caixa = request.GET["datetime"]
+                reg.data_servidor = datetime.now()
+                reg.validado = False
+                reg.codigo_validacao = request.GET["h"]
+                reg.criado_por = "ERRO"
+                reg.caixa_id = None
+                reg.local_atual_caixa = "Caixa não encontrada"
+                reg.save()
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=400)            
 
-def dados_caixas_view(request):
+    return HttpResponse(status=404)
+
+def dados_caixass_view(request):
     context = {}
     if(request.GET):
         reg = Registo()
         
-        caixa = Caixa.objects.filter(mac_adress=request.GET["mac"], ip = request.GET["ip"])[0]
+        caixa = Caixa.objects.filter(mac_address=request.GET["mac"])
         data_caixa = request.GET["datetime"]
         data_servidor = datetime.datetime.now()
-        local = caixa.local_atual_id
+            
         
         if(caixa):
-            reg.caixa = caixa        
-        reg.codigo_hexa_cartao = request.GET["rfid"]
-        reg.codigo_validacao = request.GET["h"]
-        reg.data_caixa = data_caixa
-        reg.data_servidor = data_servidor
-        reg.criado_por = "Caixa"
-        reg.local_atual_caixa = local.nome
-        if(request.GET["h"] == caixa.token_seguranca):
-            reg.validado = True
+            
+            caixa = caixa[0]
+            local = local_caixa_ativa_por_caixa(caixa.id)
+            print(local)
+            if(local):
+                reg.local_atual_caixa = local.nome
+                reg.caixa = caixa  
+                reg.codigo_hexa_cartao = request.GET["rfid"]
+                reg.codigo_validacao = request.GET["h"]
+                reg.data_caixa = data_caixa
+                reg.data_servidor = data_servidor
+                reg.criado_por = "Caixa"
+                if(request.GET["h"] == caixa.token_seguranca):
+                    reg.validado = True
+                    reg.save()
+                    return HttpResponse(status=200)
+                else:
+                    reg.validado = False
+                    reg.save()
+                    return HttpResponse(status=400)
+                
+            else:
+                reg.local_atual_caixa = "Caixa não associada"
+                reg.caixa = caixa  
+                reg.codigo_hexa_cartao = request.GET["rfid"]
+                reg.codigo_validacao = request.GET["h"]
+                reg.data_caixa = data_caixa
+                reg.data_servidor = data_servidor
+                reg.criado_por = "Caixa"
+                reg.validado= False
+                reg.save()
+                return HttpResponse(status=400)
+            
         else:
+            reg.caixa = None
+            reg.local_atual_caixa = "Caixa não encontrada!"
             reg.validado = False
-        
-        reg.save()
-        context["sucesso"] = "Inserido"      
-        context["mac"] = request.GET["mac"]
-        context["ip"] = request.GET["ip"]
-        context["datetime"] = request.GET["datetime"]
-        context["rfid"] = request.GET["rfid"]
-        context["h"] = request.GET["h"]        
-    context["sucesso"] = "ERRO" 
-
-    return HttpResponse(status=404)
+            reg.codigo_hexa_cartao = request.GET["rfid"]
+            reg.codigo_validacao = request.GET["h"]        
+            reg.data_caixa = data_caixa
+            reg.data_servidor = data_servidor
+            reg.criado_por = "ERRO"
+            reg.save()
+            return HttpResponse(status=400)
 
 def registos_view(request):
     context = {}

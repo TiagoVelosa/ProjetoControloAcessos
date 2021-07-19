@@ -3,10 +3,12 @@
     margin-bottom: 2%;
     margin-top: 2%;
     border-radius: 10px;
+    cursor: pointer;
     
     }
 .cartao2:hover{
     background-color: #cccccc;
+    
 }
 .box-3{
     

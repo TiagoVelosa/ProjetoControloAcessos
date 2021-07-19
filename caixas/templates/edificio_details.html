@@ -14,7 +14,7 @@ Edificios
         <ul style="margin: 1%;">
             {% for local in locais %}
                 <li class= "linha_lista"><a class="link_preto" href="{% url 'local_details' local.id %}">{{local.nome}}</a></li>
-            {% endfor%}
+            {% endfor %}
             
         </ul style="margin: 1%;">
     </div>
@@ -38,14 +38,14 @@ Edificios
     
 </div>
 <div class = "div_botoes">
-    <button class="botao" onclick="location.href='{% url 'locais' %}' ">
+    <button class="botao" onclick="location.href='{% url 'adicionar_locais' %}' ">
         Adicionar Local
     </button>
     <button class="botao" onclick="location.href='{% url 'edf_historico_id' edificio.id %}' ">
         Histórico de Locais do Edificio
     </button>
     {% if request.user.is_supergestor %}
-    <button class="botao" onclick="location.href='{% url 'locais' %}' ">
+    <button class="botao" onclick="location.href='{% url 'adicionar_locais' %}' ">
         Histórico de Gestores do Edificio
     </button>
     {% endif %}

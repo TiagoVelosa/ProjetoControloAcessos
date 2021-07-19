@@ -86,7 +86,6 @@ class LocalForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTA
     nome = forms.CharField(max_length=20, label = "Nome",widget=forms.TextInput(attrs={'placeholder': 'Nome do Local', 'style': 'width: 50%; height: 30px;'}))
     descricao = forms.CharField(label="Descricão", max_length=50,widget=forms.TextInput(attrs={'placeholder': 'Descrição do Local', 'style': 'width: 50%; height: 30px;'}),required=False)
     edificio = forms.ModelChoiceField(queryset=None,empty_label="Selecione o Edificio")
-
     data_inicio = forms.DateTimeField(widget=DateInput())
     data_fim = forms.DateTimeField(widget=DateInput(), required=False)   
 
@@ -115,8 +114,7 @@ class LocalForm(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTA
         if tipo=="editar":
             local = self.instance
             local.modificado_por= user
-            local.data_modificado=datetime.date.today()
-            
+            local.data_modificado=datetime.date.today()            
         else:
             local = Local(nome=data["nome"],descricao = data['descricao'],data_inicio = data['data_inicio'],data_fim = data['data_fim'],edificio = data["edificio"])
             local.criado_por= user
@@ -147,7 +145,6 @@ class PessoaForm(forms.ModelForm):  # VALIDAÇÃO FEITA (Adicionar/Editar) / TES
             raise forms.ValidationError("Já existe uma pessoa com esses dados!")
         verifica_nome(first_name)
         verifica_nome(last_name)
-        verifica_numero_telemovel(phone_number)
     
     
     def save(self,user,tipo):
@@ -274,19 +271,22 @@ class Form_Caixa_Local(forms.ModelForm): #VALIDAÇÃO FEITA (ADICIONAR) / TESTAD
 
 
 class Form_Caixa(forms.ModelForm): # VALIDAÇÃO FEITA (Adicionar/Editar) / TESTADA (Adicionar/Editar)
-    mac_address = forms.CharField(max_length=50)
+    mac_address = forms.CharField(max_length=50, help_text = "Formato aceite: 00-00-00-00-00-00 ou 00:00:00:00:00:00")
+    ip_address = forms.CharField(max_length=50)
     token_seguranca = forms.CharField(max_length=50)
     utilizavel = forms.BooleanField(required=False, initial=False, label = "Utilizável")
     class Meta:
         model = Caixa
-        fields = ("mac_address","token_seguranca","utilizavel")
+        fields = ("mac_address","ip_address","token_seguranca","utilizavel")
 
     def clean(self):
         cleaned_data = super(Form_Caixa, self).clean()    
         mac_address = cleaned_data["mac_address"]
+        ip_address = cleaned_data["ip_address"]
         if(Caixa.objects.filter(mac_address=mac_address)):
             raise forms.ValidationError("Já existe uma caixa com esse MAC address!")
-        verifica_mac_address(mac_address)      
+        verifica_mac_address(mac_address)
+        verifica_ip_address(ip_address)      
 
     def save(self,user,tipo):
         data = self.cleaned_data        

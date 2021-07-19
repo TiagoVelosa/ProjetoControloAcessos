@@ -10,11 +10,10 @@
         <h2 class="titulo">Relações ativas</h2>
         <div class = "card mb-4"></div>
         {% if lista_edfs %}
-            {% for edf in lista_edfs %}
-                
+            {% for edf in lista_edfs %}                
                     {% for key, values in relacoes.items %}
                         {% if key == edf.nome %}
-                            <div class = "cartao2" style="border-color: rgb(189, 189, 189); justify-content: space-between; " onclick="location.href='{% url 'edf_details' edf.id %}' " >
+                            <div class = "cartao2" style="border-color: rgb(189, 189, 189); justify-content: space-between; margin-left: 2%; " onclick="location.href='{% url 'edf_details' edf.id %}' " >
                                 <h2 style="margin-top: 1%; margin-left: 1%;">{{edf.nome}}</h2>
                                 <h5 style="color: gray; margin-left: 1%;">{{edf.descricao}}</h5>
                                 <h5 style = "color: gray; margin-left: 1%;">

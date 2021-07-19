@@ -2,7 +2,7 @@ import datetime
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.sql.query import RawQuery
-from caixas.models import Edificio, Local, Rel_Gestor_Edificio
+from caixas.models import Caixa_Local, Edificio, Local, Rel_Gestor_Edificio
 
 def query_set_edificios_associados_gestor(request):
     gestor = request.user
@@ -24,11 +24,14 @@ def query_set_edificios_associados_gestor(request):
 
 def relacoes_ativas_edf_gestor(request):
     gestor = request.user
-    return Rel_Gestor_Edificio.objects.filter(gestor_id = gestor.id).filter( Q(data_fim__gt = datetime.date.today()) | Q(data_fim = None))
+    return Rel_Gestor_Edificio.objects.filter(gestor_id = gestor.id).filter( Q(data_fim__gt = datetime.date.today()) | Q(data_fim = None)).filter(data_inicio__lt = datetime.date.today())
 
 def relacao_gestor_edf(request):
     gestor = request.user
     return Rel_Gestor_Edificio.objects.filter(gestor_id = gestor.id)
+
+def relacoes_ativas_edf_gestor_por_edf(edificio_id):
+    return Rel_Gestor_Edificio.objects.filter(edificio_id = edificio_id).filter( Q(data_fim__gt = datetime.date.today()) | Q(data_fim = None)).filter(data_inicio__lt = datetime.date.today())
 
 
 
@@ -54,3 +57,11 @@ def query_set_locais_ativos_associados_a_gestor(request):
             count += 1
     
     return query_set_locais
+
+def locais_ativos_edificio(edificio_id):
+    return Local.objects.filter(edificio_id = edificio_id).filter( Q(data_fim__gt = datetime.date.today()) | Q(data_fim = None))
+
+
+def local_caixa_ativa_por_caixa(caixa_id):
+    relacao = Caixa_Local.objects.filter(caixa_id = caixa_id).filter( Q(data_fim__gt = datetime.date.today()) | Q(data_fim = None))
+    return relacao[0].local

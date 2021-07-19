@@ -52,11 +52,10 @@ class Caixa(models.Model):
     modificado_por = models.CharField(blank=True,max_length=50,null=True)
     criado_por = models.CharField(max_length=50)
     utilizavel = models.BooleanField(default = True)
-    local_atual_id = models.ForeignKey(Local,blank=True, null=True,on_delete=models.SET_NULL) 
     token_seguranca = models.CharField(max_length=50)
     data_desativacao = models.DateField(blank=True, null=True)
-    mac_address = models.CharField(max_length=50,default="0.0.0.0", unique=True, error_messages={'unique':"Já existe uma caixa com este mac_address!"})
-
+    mac_address = models.CharField(max_length=50,default="00:00:00:00:00:00", unique=True, error_messages={'unique':"Já existe uma caixa com este mac_address!"})
+    ip_address = models.CharField(max_length=50, default="000.000.000.000")
     def __str__(self):
         return str(self.mac_address)
 
@@ -76,16 +75,16 @@ class Cartao(models.Model):
 
 class Registo(models.Model):
     caixa = models.ForeignKey(Caixa,on_delete=models.SET_NULL,null=True)
-    codigo_hexa_cartao = models.CharField(max_length=30, default="default")
+    codigo_hexa_cartao = models.CharField(max_length=30)
     data_caixa = models.DateTimeField(blank=True, null=True)
     data_servidor = models.DateTimeField(blank=True, null=True)
-    validado = models.BooleanField(default=True)
-    codigo_validacao = models.CharField(max_length=50,default="default")
+    validado = models.BooleanField()
+    codigo_validacao = models.CharField(max_length=50)
     data_criacao = models.DateField(auto_now_add=True)
     data_modificado = models.DateField(blank=True, null=True)
     modificado_por = models.CharField(blank=True,max_length=50,null=True)
     criado_por = models.CharField(max_length=50)
-    local_atual_caixa = models.CharField(max_length=50,default="default",null=True,blank=True)
+    local_atual_caixa = models.CharField(max_length=50,null=True,blank=True)
     
 
 class Caixa_Local(models.Model):

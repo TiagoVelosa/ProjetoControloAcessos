@@ -13,10 +13,9 @@ def edificio_details_view(request,id):
     except Edificio.DoesNotExist:
         context['erro_nao_existe'] = "ERRO - Edificio não encontrado!"
     
-    locais_ativos = Local.objects.raw('select * from caixas_local where edificio_id= %s and (data_fim > now() or data_fim is NULL);', [id])
-    gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [id])
-    for gestor in gestores_edf:
-        
+    locais_ativos = locais_ativos_edificio(id)
+    gestores_edf = relacoes_ativas_edf_gestor_por_edf(id)
+    for gestor in gestores_edf:        
         gestores.append(gestor) 
     
     
@@ -39,20 +38,20 @@ def edf_lista_view(request):
 def edf_geral_view(request):
     context = {}
     gestores = {}
-    relacoes = {}
+    relacoes = {} 
     current_user = request.user
     if(current_user.is_supergestor):
         edificios = Edificio.objects.all()    
         for edf in edificios:
-            rel = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where edificio_id = %s and (data_fim >= (now()- interval 1 day)  or data_fim is NULL);',[edf.id])
+            rel = relacoes_ativas_edf_gestor_por_edf(edf.id)
             if(rel):
                 relacoes[edf.nome] = rel
         context["lista_edfs"] = edificios
         context["relacoes"] = relacoes
     else:    
-        relacoes = Rel_Gestor_Edificio.objects.raw('select * from caixas_rel_gestor_edificio where gestor_id = %s and (data_fim > now() or data_fim is NULL) and (data_inicio < now());',[current_user.id])
+        relacoes = relacoes_ativas_edf_gestor(request)
         for rel in relacoes:
-            gestores_edf = Rel_Gestor_Edificio.objects.raw('select distinct * from caixas_rel_gestor_edificio where edificio_id =%s and (data_fim > now() or data_fim is NULL);', [rel.edificio_id])
+            gestores_edf =  relacoes_ativas_edf_gestor_por_edf(rel.edificio_id) 
             edificio = Edificio.objects.get(id = rel.edificio_id)
             nome_gestores = []
             for gestor in gestores_edf:
@@ -61,7 +60,6 @@ def edf_geral_view(request):
 
     context["gestores"] = gestores    
     context["edificios"] = relacoes
-    print(context)
     return render(request, 'edificios_geral.html', context)
 
 def historico_edf_id_view(request,id):

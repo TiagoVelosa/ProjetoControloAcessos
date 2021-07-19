@@ -11,9 +11,8 @@ Caixas
     <thead>
         <tr>
             <th>Caixa</th>
-            <th>IP</th>
-            <th>Mac adress</th>
-            <th>Disponível</th>
+            <th>Mac address</th>
+            <th>Estado</th>
             <th>Editar</th>
             <th>Ativar/Desativar</th>    
         </tr>
@@ -22,18 +21,19 @@ Caixas
         {% for caixa in caixas %}
             <tr>                
                 <td>{{caixa.id}}</td>
-                <td ><a href =" {% url 'caixa_detalhes' caixa.id %}">{{caixa.ip}}</a></td>
-                <td >{{caixa.mac_adress}}</td>
-                {% if caixa.ativo and local_atual_id == null %}
+                <td ><a href =" {% url 'caixa_detalhes' caixa.id %}">{{caixa.mac_address}}</a></td>
+                {% if caixa.utilizavel and local_atual_id == null %}
                     <td>Disponível</td>
+                {% elif caixa.utilizavel == False %}
+                    <td>Avariada</td>
                 {% else %}
-                    <th>Não Disponível</th>
+                    <td>No Uso</td>
                 {% endif %}
                 <td><a href="{% url 'caixas_editar' caixa.id %}">[EDITAR]</a></td>
-                {% if caixa.ativo %}
-                <td><a onclick="return confirm('Tem a certeza que pretente desativar a caixa?');" href ="{% url 'desativar_caixa' caixa.id %}"> Desativar Caixa</a></td>
+                {% if caixa.utilizavel %}
+                <td><a onclick="return confirm('Tem a certeza que pretente marcar a caixa como avariada?');" href ="{% url 'desativar_caixa' caixa.id %}"> Desativar Caixa</a></td>
                 {% else %}
-                <td><a onclick="return confirm('Tem a certeza que pretente ativar a caixa?');" href ="{% url 'ativar_caixa' caixa.id %}"> Ativar Caixa</a></td>
+                <td><a onclick="return confirm('Tem a certeza que pretente marcar a caixa como operacional?');" href ="{% url 'ativar_caixa' caixa.id %}"> Ativar Caixa</a></td>
                 {%endif%}
                            
                 

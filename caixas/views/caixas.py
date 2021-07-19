@@ -25,8 +25,8 @@ def ativar_caixa(request,caixa_id):
         caixa = Caixa.objects.get(id=caixa_id)
     except Caixa.DoesNotExist:
         messages.ERROR("Caixa não existe!")    
-    caixa.ativo = True
-    if (caixa.ativo):
+    caixa.utilizavel = True
+    if (caixa.utilizavel):
         messages.success(request,"Caixa ativada com sucesso!")
         caixa.modificado_por= gestor_name
         caixa.data_modificado = datetime.date.today()
@@ -40,8 +40,8 @@ def desativar_caixa(request,caixa_id):
         caixa = Caixa.objects.get(id=caixa_id)
     except Caixa.DoesNotExist:
         messages.ERROR("Caixa não existe!")    
-    caixa.ativo = False
-    if (not caixa.ativo):
+    caixa.utilizavel = False
+    if (not caixa.utilizavel):
         messages.success(request,"Caixa desativada com sucesso!")
         caixa.modificado_por= gestor_name
         caixa.data_modificado = datetime.date.today()
@@ -50,7 +50,7 @@ def desativar_caixa(request,caixa_id):
 
 def caixas_inativas(request):
     context = {}
-    caixas_inativas  = Caixa.objects.filter(ativo = 0)
+    caixas_inativas  = Caixa.objects.filter(utilizavel = False)
     context['caixas_inativas'] = caixas_inativas
 
     return render(request, "caixas_inativas.html",context)
