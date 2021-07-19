@@ -5,6 +5,7 @@ A instalação para sistema UNIX é a seguinte:
 A instalação do Django requer o Python com a versão 3.8 ou superior instalada no sistema para instalar é necessário utilizar este comando no linux:
 
 $ sudo apt-get update
+
 $ sudo apt-get install python3.8
 
 Para verificar a versão é utilizado este comando:
