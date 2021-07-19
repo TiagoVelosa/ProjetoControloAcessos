@@ -146,8 +146,7 @@ def registos_view(request):
 
         if "PDF" in request.GET:            
             registos_ordenados = registos.order_by('data_caixa')
-            context = {
-            'today': datetime.date.today(), 
+            context = {            
             'num_registos': registos.count(),
             'first_date': registos_ordenados[0].data_servidor,
             'last_date': registos_ordenados.reverse()[0].data_servidor,

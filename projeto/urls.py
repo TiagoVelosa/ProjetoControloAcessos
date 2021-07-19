@@ -20,7 +20,7 @@ from caixas.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_page_view, name = "home"),
+    path('', edf_geral_view, name = "home"),
     path('registo/', register_view, name ="registo"),
     path('logout/', logout_view, name ="logout"),
     path('login/', login_view, name ="login"),    

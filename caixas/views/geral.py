@@ -34,8 +34,7 @@ def home_page_view(request):
 
 def generate_pdf(request, *args, **kwargs):
     registos = Registo.objects.all()
-    context = {
-        'today': datetime.date.today(), 
+    context = {         
         'amount': 39.99,
         'customer_name': 'Cooper Mann',
         'order_id': 1233434,
